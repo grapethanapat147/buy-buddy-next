@@ -5,7 +5,7 @@ import { Providers } from "./providers";
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
-  subsets: ["latin", "thai"],
+  subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
