@@ -19,9 +19,33 @@ export type PlanLine = {
   name: string;
   icon: string;
   tier: ProductTier;
+  category: string;
   lineTotal: number;
   suggested: boolean;
 };
+
+function FilterChip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-full px-3 py-1 text-sm transition ${
+        active
+          ? "bg-brand-50 font-semibold text-brand-700"
+          : "border border-ink/10 text-ink-soft hover:bg-cream-sunk"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
 
 export type RestockGroup = {
   cadence: string;
@@ -95,6 +119,10 @@ export default function PlanView({
   isLoggedIn: boolean;
 }) {
   const [tab, setTab] = useState<"list" | "calendar">("list");
+  const [filter, setFilter] = useState<string>("all");
+  const categories = [...new Set(items.map((i) => i.category))];
+  const activeFilter = filter !== "all" && !categories.includes(filter) ? "all" : filter;
+  const shown = activeFilter === "all" ? items : items.filter((i) => i.category === activeFilter);
   const over = overBudgetBy > 0;
 
   const prevOver = useRef(overBudgetBy);
@@ -169,9 +197,22 @@ export default function PlanView({
             )}
           </AnimatePresence>
 
+          {categories.length > 1 && (
+            <div className="mb-3 flex flex-wrap gap-2">
+              <FilterChip active={activeFilter === "all"} onClick={() => setFilter("all")}>
+                ทั้งหมด
+              </FilterChip>
+              {categories.map((c) => (
+                <FilterChip key={c} active={activeFilter === c} onClick={() => setFilter(c)}>
+                  {c}
+                </FilterChip>
+              ))}
+            </div>
+          )}
+
           <div>
             <AnimatePresence initial={false}>
-              {items.map((it) => (
+              {shown.map((it) => (
                 <motion.div
                   key={it.productId}
                   layout

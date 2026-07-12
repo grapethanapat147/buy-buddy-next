@@ -34,6 +34,29 @@ export type QuestCategory = {
   items: QuestItem[];
 };
 
+function FilterChip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-full px-3 py-1 text-sm transition ${
+        active
+          ? "bg-brand-50 font-semibold text-brand-700"
+          : "border border-ink/10 text-ink-soft hover:bg-cream-sunk"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function RecommendationsQuest({
   categories,
   budget,
@@ -46,6 +69,9 @@ export default function RecommendationsQuest({
   readinessPercent: number;
 }) {
   const [toast, setToast] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>("all");
+  const shownCategories =
+    filter === "all" ? categories : categories.filter((c) => c.name === filter);
   const prev = useRef<{ done: Record<string, boolean>; percent: number } | null>(null);
 
   useEffect(() => {
@@ -93,8 +119,21 @@ export default function RecommendationsQuest({
         </div>
       </div>
 
+      {categories.length > 1 && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>
+            ทั้งหมด
+          </FilterChip>
+          {categories.map((c) => (
+            <FilterChip key={c.name} active={filter === c.name} onClick={() => setFilter(c.name)}>
+              {c.name}
+            </FilterChip>
+          ))}
+        </div>
+      )}
+
       <div className="mt-4 space-y-5">
-        {categories.map((cat) => {
+        {shownCategories.map((cat) => {
           const done = cat.collected === cat.total && cat.total > 0;
           return (
             <section key={cat.name}>

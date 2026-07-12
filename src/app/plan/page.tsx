@@ -39,6 +39,7 @@ export default async function PlanPage() {
       name: product.name,
       icon: product.icon,
       tier: product.tier,
+      category: product.categoryName,
       lineTotal,
       suggested: suggested.has(product.id),
     }))

@@ -36,17 +36,20 @@ insert into public.products (category_id, name, slug, tier, mode, ref_price, res
   ((select id from public.categories where slug='work'), 'โคมไฟตั้งโต๊ะ', 'desk-lamp', 'recommended', 'move_in', 290, null, null, '[{"field":"work_style","op":"in","value":["home","hybrid"]}]', '💡'),
   ((select id from public.categories where slug='work'), 'ราวตากผ้าในห้อง', 'laundry-rack', 'recommended', 'move_in', 350, null, null, '[{"field":"laundry","op":"in","value":["hand","service"]}]', '🧺');
 
-insert into public.product_prices (product_id, platform, price) values
-  ((select id from public.products where slug='rice-cooker'), 'Shopee', 590),
-  ((select id from public.products where slug='rice-cooker'), 'Lazada', 620),
-  ((select id from public.products where slug='rice-cooker'), 'Makro', 650),
-  ((select id from public.products where slug='frying-pan'), 'Shopee', 250),
-  ((select id from public.products where slug='frying-pan'), 'Lazada', 275),
-  ((select id from public.products where slug='mini-fridge'), 'Shopee', 3990),
-  ((select id from public.products where slug='mini-fridge'), 'Lazada', 4290),
-  ((select id from public.products where slug='mini-fridge'), 'Makro', 4150),
-  ((select id from public.products where slug='mattress-3-5ft'), 'Shopee', 1890),
-  ((select id from public.products where slug='mattress-3-5ft'), 'Lazada', 1990);
+-- Reference prices across the main marketplaces, with a small per-product
+-- jitter so the cheapest store varies realistically from item to item.
+insert into public.product_prices (product_id, platform, price)
+select
+    p.id,
+    x.platform,
+    greatest(1, round(p.ref_price * (x.mult + (((p.id * x.seed) % 7) - 3) * 0.012))::int)
+from public.products p
+cross join (values
+    ('Shopee', 1.00, 3),
+    ('Lazada', 1.03, 5),
+    ('TikTok Shop', 0.98, 7),
+    ('Official Store', 1.08, 2)
+) as x(platform, mult, seed);
 
 insert into public.product_pairings (product_id, paired_product_id) values
   ((select id from public.products where slug='rice-cooker'), (select id from public.products where slug='rice-5kg')),

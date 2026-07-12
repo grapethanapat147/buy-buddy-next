@@ -21,10 +21,10 @@ export default async function ProductDetailPage({
   const bundle = await getBundle(product.id);
   const planIds = new Set(await getPlanIds());
 
-  const cheapest = product.prices.length
-    ? [...product.prices].sort((a, b) => a.price - b.price)[0]
-    : { platform: "ราคาอ้างอิง", price: product.refPrice };
-  const otherStoreCount = Math.max(0, product.prices.length - 1);
+  const sortedPrices = product.prices.length
+    ? [...product.prices].sort((a, b) => a.price - b.price)
+    : [{ platform: "ราคาอ้างอิง", price: product.refPrice }];
+  const cheapest = sortedPrices[0];
 
   const supabase = await createClient();
   const { data: cheapestRow } = await supabase
@@ -45,22 +45,29 @@ export default async function ProductDetailPage({
         <h1 className="text-2xl font-semibold text-ink">{product.name}</h1>
       </div>
 
-      <div className="mt-3 rounded-xl border border-ink/10 bg-cream-card shadow-soft">
+      <div className="mt-3 overflow-hidden rounded-xl border border-ink/10 bg-cream-card shadow-soft">
         <div className="flex items-center justify-between p-3">
-          <span className="text-sm text-ink-soft">เทียบราคา</span>
+          <span className="text-sm font-semibold text-ink">เทียบราคาจากร้านค้า</span>
           <span className="text-xs text-ink-muted">ราคาอ้างอิง</span>
         </div>
-        <div className="flex items-center justify-between border-t border-ink/8 bg-emerald-50 p-3 text-emerald-700">
-          <span className="text-sm font-semibold">{cheapest.platform} · คุ้มสุด</span>
-          <span className="font-semibold tabular-nums">
-            ฿{cheapest.price.toLocaleString()}
-          </span>
-        </div>
-        {otherStoreCount > 0 && (
-          <div className="border-t border-ink/8 p-2 text-center text-sm text-ink-soft">
-            ดูอีก {otherStoreCount} ร้าน
+        {sortedPrices.map((pr, i) => (
+          <div
+            key={pr.platform}
+            className={`flex items-center justify-between border-t border-ink/8 p-3 ${
+              i === 0 ? "bg-emerald-50 text-emerald-700" : "text-ink"
+            }`}
+          >
+            <span className="flex items-center gap-2 text-sm font-semibold">
+              {pr.platform}
+              {i === 0 && (
+                <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[11px] font-semibold text-white">
+                  คุ้มสุด
+                </span>
+              )}
+            </span>
+            <span className="font-semibold tabular-nums">฿{pr.price.toLocaleString()}</span>
           </div>
-        )}
+        ))}
       </div>
 
       {bundle.length > 0 && (
