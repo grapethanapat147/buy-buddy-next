@@ -1,0 +1,148 @@
+/**
+ * BuyBuddy design tokens — official palette per docs/DESIGN.md (§5, §6, §9, §22, §23).
+ *
+ * Two naming layers live here:
+ *  1. Existing utility-name tokens (brand, cream, ink, rose/amber/emerald, radius-xl/2xl,
+ *     shadow-soft/lift, animate-pop) — remapped to official values so every page that already
+ *     binds to `bg-brand`, `text-ink`, etc. instantly adopts the official look.
+ *  2. Official-name tokens (primary, surface, text-primary, success-soft, border-default, …)
+ *     from DESIGN §22 — for new components using `bg-primary`, `text-text-primary`, etc.
+ */
+
+@theme {
+    /* ---- Brand / primary (utility-name layer) ---- */
+    --color-brand: #ff8a6e;
+    --color-brand-50: #fff0ea;
+    --color-brand-100: #ffe1b5;
+    --color-brand-500: #f77c61;
+    --color-brand-600: #ff8a6e;
+    --color-brand-700: #e96d54;
+
+    /* ---- Surfaces (utility-name layer) ---- */
+    --color-cream: #fff7ef;
+    --color-cream-card: #ffffff;
+    --color-cream-sunk: #fff0e1;
+
+    /* ---- Text (utility-name layer) ---- */
+    --color-ink: #5c3a2e;
+    --color-ink-soft: #8a6b5a;
+    --color-ink-muted: #a98f80;
+
+    /* ---- Status (override Tailwind built-ins so tier/budget utilities match DESIGN) ---- */
+    --color-rose-50: #fdecec;
+    --color-rose-500: #d85c5c;
+    --color-rose-600: #d85c5c;
+    --color-rose-700: #d85c5c;
+    --color-rose-800: #d85c5c;
+
+    --color-amber-50: #fff4de;
+    --color-amber-600: #c98a35;
+    --color-amber-700: #c98a35;
+    --color-amber-800: #c98a35;
+
+    --color-emerald-50: #eaf6ef;
+    --color-emerald-500: #4f9b78;
+    --color-emerald-600: #4f9b78;
+    --color-emerald-700: #4f9b78;
+
+    /* ---- Official-name tokens (DESIGN §22) ---- */
+    --color-primary: #ff8a6e;
+    --color-primary-hover: #f77c61;
+    --color-primary-pressed: #e96d54;
+    --color-primary-soft: #fff0ea;
+    --color-primary-disabled: #ffd0c4;
+    --color-on-primary: #ffffff;
+
+    --color-secondary: #ffc18b;
+    --color-accent: #ffe1b5;
+
+    --color-background: #fff7ef;
+    --color-surface: #fff0e1;
+    --color-surface-white: #ffffff;
+    --color-surface-hover: #fff8f2;
+    --color-surface-selected: #fff0ea;
+    --color-surface-disabled: #f7f1eb;
+
+    --color-text-primary: #5c3a2e;
+    --color-text-secondary: #8a6b5a;
+    --color-text-muted: #a98f80;
+    --color-text-disabled: #c8b8ae;
+    --color-text-on-primary: #ffffff;
+    --color-text-link: #e96d54;
+
+    --color-border-default: #f2ddcc;
+    --color-border-subtle: #f8eadf;
+    --color-border-strong: #dcbeaa;
+    --color-border-selected: #ff8a6e;
+    --color-border-focus: #ff8a6e;
+    --color-border-disabled: #e8ddd5;
+
+    --color-success: #4f9b78;
+    --color-success-soft: #eaf6ef;
+    --color-warning: #c98a35;
+    --color-warning-soft: #fff4de;
+    --color-error: #d85c5c;
+    --color-error-soft: #fdecec;
+    --color-info: #5d87b8;
+    --color-info-soft: #edf4fc;
+
+    /* ---- Typography ---- */
+    --font-sans: "LINE Seed Sans", "Sukhumvit Set", var(--font-jakarta), ui-sans-serif,
+        system-ui, sans-serif;
+
+    /* ---- Radius (utility-name + official aliases) ---- */
+    --radius-xl: 16px;
+    --radius-2xl: 24px;
+    --radius-small: 8px;
+    --radius-medium: 12px;
+    --radius-large: 16px;
+    --radius-xlarge: 24px;
+    --radius-2xlarge: 32px;
+
+    /* ---- Shadow (soft, per DESIGN §9.3) ---- */
+    --shadow-soft: 0 2px 8px rgba(92, 58, 46, 0.06);
+    --shadow-lift: 0 8px 24px rgba(92, 58, 46, 0.1);
+
+    /* ---- Motion ---- */
+    --animate-pop: pop 220ms ease-out;
+    @keyframes pop {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.18);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+}
+
+/**
+ * LINE Seed Sans TH — licensed webfont.
+ * Drop the .woff2 files into /public/fonts (see public/fonts/README.md), then uncomment.
+ * Left commented so no 404s occur until the files are present.
+ */
+/*
+@font-face {
+    font-family: "LINE Seed Sans";
+    src: url("/fonts/LINESeedSansTH_W_Rg.woff2") format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "LINE Seed Sans";
+    src: url("/fonts/LINESeedSansTH_W_Md.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "LINE Seed Sans";
+    src: url("/fonts/LINESeedSansTH_W_Bd.woff2") format("woff2");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+*/

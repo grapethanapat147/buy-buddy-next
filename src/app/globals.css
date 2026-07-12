@@ -1,36 +1,5 @@
 @import "tailwindcss";
-
-@theme {
-    --color-brand: #ff6b5e;
-    --color-brand-50: #fff1ee;
-    --color-brand-100: #ffe1db;
-    --color-brand-500: #ff8a6e;
-    --color-brand-600: #ff6b5e;
-    --color-brand-700: #e5533f;
-
-    --color-cream: #fff9f4;
-    --color-cream-card: #ffffff;
-    --color-cream-sunk: #fff3ea;
-
-    --color-ink: #2b2724;
-    --color-ink-soft: #7a716b;
-    --color-ink-muted: #a79e97;
-
-    --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-
-    --radius-xl: 14px;
-    --radius-2xl: 20px;
-
-    --shadow-soft: 0 2px 16px -4px rgba(43, 39, 36, 0.1);
-    --shadow-lift: 0 8px 28px -8px rgba(43, 39, 36, 0.18);
-
-    --animate-pop: pop 220ms ease-out;
-    @keyframes pop {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.18); }
-        100% { transform: scale(1); }
-    }
-}
+@import "../styles/tokens.css";
 
 html {
     font-size: 18px;

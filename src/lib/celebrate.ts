@@ -15,7 +15,7 @@ export function celebrate(origin: Origin = { x: 0.5, y: 0.4 }): void {
     spread: 65,
     startVelocity: 32,
     origin,
-    colors: ["#FF6B5E", "#FF8A6E", "#FFC7A6", "#10B981", "#FFF1EE"],
+    colors: ["#FF8A6E", "#FFC18B", "#FFE1B5", "#4F9B78", "#FFF0EA"],
     scalar: 0.9,
   });
 }

@@ -17,7 +17,7 @@ export default function BudgetMeter({
   const pct = budget > 0 ? Math.min(100, Math.round((total / budget) * 100)) : 0;
   const near = !over && pct >= 85;
 
-  const fill = over ? "#F43F5E" : near ? "#F59E0B" : "#10B981";
+  const fill = over ? "#D85C5C" : near ? "#C98A35" : "#4F9B78";
   const textColor = over
     ? "text-rose-600"
     : near
