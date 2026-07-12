@@ -21,7 +21,7 @@ export default function AiPlannerForm() {
   return (
     <form action={planFromText} className="rounded-2xl bg-cream-sunk p-4 text-left">
       <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-        <Mascot mood="thinking" className="text-lg" />
+        <Mascot mood="thinking" size={24} />
         บอกเป็นภาษาคนก็ได้
       </div>
       <textarea

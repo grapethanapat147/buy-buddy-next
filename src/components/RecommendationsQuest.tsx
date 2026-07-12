@@ -165,7 +165,7 @@ export default function RecommendationsQuest({
             className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4"
           >
             <div className="flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-cream shadow-lift">
-              <Mascot mood="celebrate" className="text-lg" />
+              <Mascot mood="celebrate" size={28} />
               <span>{toast}</span>
             </div>
           </motion.div>
