@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
-import { motion } from "motion/react";
 import { saveSpecForm } from "@/app/actions";
+import Button from "@/components/ui/Button";
 
 type Choice = { key: string; label: string; options: Array<[string, string]> };
 
@@ -52,14 +52,9 @@ const inputClass =
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <motion.button
-      whileTap={{ scale: 0.98 }}
-      type="submit"
-      disabled={pending}
-      className="mt-8 w-full rounded-full bg-brand p-4 text-lg font-semibold text-white shadow-soft transition hover:bg-brand-500 disabled:opacity-60"
-    >
+    <Button type="submit" size="large" pill disabled={pending} className="mt-8 w-full">
       ดูชุดของแนะนำ
-    </motion.button>
+    </Button>
   );
 }
 

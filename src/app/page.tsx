@@ -2,6 +2,7 @@ import Link from "next/link";
 import AppLayout from "@/components/AppLayout";
 import Mascot from "@/components/Mascot";
 import AiPlannerForm from "@/components/AiPlannerForm";
+import Card from "@/components/ui/Card";
 
 const perks: Array<[string, string]> = [
   ["🎯", "แนะนำตามคุณ"],
@@ -13,8 +14,8 @@ export default function Home() {
   return (
     <AppLayout>
       <div className="py-6 text-center">
-        <div className="mx-auto mb-5 flex h-28 w-28 items-center justify-center rounded-full bg-brand-50">
-          <Mascot mood="happy" className="text-6xl" />
+        <div className="mx-auto mb-5 flex items-center justify-center">
+          <Mascot mood="happy" size={180} />
         </div>
         <h1 className="text-3xl font-bold leading-tight text-ink">
           จัดของเข้าห้อง
@@ -46,12 +47,12 @@ export default function Home() {
 
         <div className="mt-10 grid grid-cols-3 gap-3">
           {perks.map(([emoji, label]) => (
-            <div key={label} className="rounded-2xl bg-cream-sunk p-4">
+            <Card key={label} className="p-4 text-center">
               <div className="text-3xl" aria-hidden="true">
                 {emoji}
               </div>
               <div className="mt-2 text-sm font-medium text-ink-soft">{label}</div>
-            </div>
+            </Card>
           ))}
         </div>
       </div>
