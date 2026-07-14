@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useOptimistic, useTransition } from "react";
 import { addToPlan, removeFromPlan } from "@/app/actions";
 
 export function AddToPlanButton({
@@ -10,28 +10,32 @@ export function AddToPlanButton({
   productId: number;
   inPlan: boolean;
 }) {
-  const [pending, startTransition] = useTransition();
+  const [optimisticInPlan, setOptimisticInPlan] = useOptimistic(inPlan);
+  const [, startTransition] = useTransition();
 
   const toggle = () =>
     startTransition(async () => {
-      if (inPlan) {
-        await removeFromPlan(productId);
-      } else {
+      const next = !optimisticInPlan;
+      setOptimisticInPlan(next);
+      if (next) {
         await addToPlan(productId);
+      } else {
+        await removeFromPlan(productId);
       }
     });
 
   return (
     <button
       onClick={toggle}
-      disabled={pending}
-      className={`mt-4 w-full rounded-full p-4 text-lg font-semibold shadow-soft transition active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none disabled:opacity-60 ${
-        inPlan
+      className={`mt-4 w-full rounded-full p-4 text-lg font-semibold shadow-soft transition active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none ${
+        optimisticInPlan
           ? "bg-emerald-50 text-emerald-700"
           : "bg-brand text-white hover:bg-brand-500"
       }`}
     >
-      {inPlan ? "✓ อยู่ในแผนแล้ว — เอาออก" : "+ ใส่ลงแผน"}
+      <span className="animate-pop" key={String(optimisticInPlan)}>
+        {optimisticInPlan ? "✓ อยู่ในแผนแล้ว — เอาออก" : "+ ใส่ลงแผน"}
+      </span>
     </button>
   );
 }
@@ -43,29 +47,31 @@ export function AddBundleItemButton({
   productId: number;
   inPlan: boolean;
 }) {
-  const [pending, startTransition] = useTransition();
+  const [optimisticInPlan, setOptimisticInPlan] = useOptimistic(inPlan);
+  const [, startTransition] = useTransition();
 
   const toggle = () =>
     startTransition(async () => {
-      if (inPlan) {
-        await removeFromPlan(productId);
-      } else {
+      const next = !optimisticInPlan;
+      setOptimisticInPlan(next);
+      if (next) {
         await addToPlan(productId);
+      } else {
+        await removeFromPlan(productId);
       }
     });
 
   return (
     <button
       onClick={toggle}
-      disabled={pending}
-      className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold transition active:scale-90 focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none disabled:opacity-60 ${
-        inPlan
+      className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold transition active:scale-90 focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none ${
+        optimisticInPlan
           ? "bg-emerald-100 text-emerald-700"
           : "bg-brand-50 text-brand-700 hover:bg-brand-100"
       }`}
     >
-      <span className="animate-pop" key={String(inPlan)}>
-        {inPlan ? "✓ เพิ่มแล้ว" : "+ เพิ่ม"}
+      <span className="animate-pop" key={String(optimisticInPlan)}>
+        {optimisticInPlan ? "✓ เพิ่มแล้ว" : "+ เพิ่ม"}
       </span>
     </button>
   );

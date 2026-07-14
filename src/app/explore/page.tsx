@@ -1,8 +1,6 @@
-import Link from "next/link";
 import AppLayout from "@/components/AppLayout";
-import IconTile from "@/components/IconTile";
 import ExploreControls from "@/components/ExploreControls";
-import PlanToggleButton from "@/components/PlanToggleButton";
+import SwipeableItemRow from "@/components/SwipeableItemRow";
 import { getProducts } from "@/lib/catalog";
 import { cheapestPrice } from "@/lib/recommendation/engine";
 import { getPlanIds } from "@/lib/session";
@@ -35,26 +33,25 @@ export default async function ExplorePage({
       <h1 className="text-2xl font-semibold text-ink">เลือกดูของเอง</h1>
       <ExploreControls categories={categories} activeCategory={category} query={q} />
 
-      <div className="mt-4 space-y-2">
+      <p className="mt-2 text-xs text-ink-muted">
+        เคล็ดลับ: ปัดขวาเพื่อเพิ่ม · ปัดซ้ายเพื่อเอาออก 👉
+      </p>
+
+      <div className="mt-3 space-y-2">
         {filtered.map((p) => (
-          <div
+          <SwipeableItemRow
             key={p.id}
-            className="flex items-center gap-3 rounded-xl border border-ink/8 bg-cream-card p-3 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift"
-          >
-            <IconTile icon={p.icon} />
-            <div className="min-w-0 flex-1">
-              <Link
-                href={`/products/${p.slug}`}
-                className="text-sm font-semibold text-ink transition-colors hover:text-brand"
-              >
-                {p.name}
-              </Link>
-              <div className="text-xs text-ink-soft tabular-nums">
+            productId={p.id}
+            inPlan={planIds.has(p.id)}
+            icon={p.icon}
+            title={p.name}
+            href={`/products/${p.slug}`}
+            subtitle={
+              <span className="tabular-nums">
                 {p.categoryName} · ฿{cheapestPrice(p).toLocaleString()}
-              </div>
-            </div>
-            <PlanToggleButton productId={p.id} inPlan={planIds.has(p.id)} />
-          </div>
+              </span>
+            }
+          />
         ))}
         {filtered.length === 0 && (
           <p className="py-6 text-center text-sm text-ink-muted">ไม่พบสินค้า</p>

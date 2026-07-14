@@ -5,9 +5,8 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import BudgetMeter from "./BudgetMeter";
 import ReadinessMeter from "./ReadinessMeter";
-import IconTile from "./IconTile";
 import Mascot from "./Mascot";
-import PlanToggleButton from "./PlanToggleButton";
+import SwipeableItemRow from "./SwipeableItemRow";
 import { celebrate } from "@/lib/celebrate";
 import { tierLabel, type ProductTier } from "@/lib/recommendation/types";
 
@@ -110,6 +109,7 @@ export default function RecommendationsQuest({
     <>
       <h1 className="text-2xl font-semibold text-ink">จัดห้องกันเลย</h1>
       <p className="mt-1 text-sm text-ink-soft">เก็บของจำเป็นให้ครบ แล้วห้องก็พร้อมอยู่</p>
+      <p className="mt-1 text-xs text-ink-muted">ปัดขวาเพื่อเพิ่ม · ปัดซ้ายเพื่อเอาออก 👉</p>
 
       <div className="mt-3 space-y-2">
         <ReadinessMeter percent={readinessPercent} />
@@ -151,33 +151,24 @@ export default function RecommendationsQuest({
               </div>
               <div className="space-y-2">
                 {cat.items.map((it) => (
-                  <div
+                  <SwipeableItemRow
                     key={it.productId}
-                    className={`flex items-center gap-3 rounded-xl border p-3 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift ${
-                      it.inPlan
-                        ? "border-emerald-200 bg-emerald-50"
-                        : "border-ink/8 bg-cream-card"
-                    }`}
-                  >
-                    <IconTile icon={it.icon} />
-                    <div className="min-w-0 flex-1">
-                      <Link
-                        href={`/products/${it.slug}`}
-                        className="text-sm font-semibold text-ink transition-colors hover:text-brand"
-                      >
-                        {it.name}
-                      </Link>
-                      <div className="mt-1 text-xs text-ink-soft tabular-nums">
-                        ฿{it.lineTotal.toLocaleString()}
-                      </div>
-                      <span
-                        className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[11px] ${tierBadge[it.tier]}`}
-                      >
-                        {tierLabel[it.tier]}
+                    productId={it.productId}
+                    inPlan={it.inPlan}
+                    icon={it.icon}
+                    title={it.name}
+                    href={`/products/${it.slug}`}
+                    subtitle={
+                      <span className="flex items-center gap-2">
+                        <span className="tabular-nums">฿{it.lineTotal.toLocaleString()}</span>
+                        <span
+                          className={`inline-block rounded-full px-2 py-0.5 text-[11px] ${tierBadge[it.tier]}`}
+                        >
+                          {tierLabel[it.tier]}
+                        </span>
                       </span>
-                    </div>
-                    <PlanToggleButton productId={it.productId} inPlan={it.inPlan} />
-                  </div>
+                    }
+                  />
                 ))}
               </div>
             </section>
