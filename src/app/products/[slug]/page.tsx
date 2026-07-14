@@ -1,7 +1,11 @@
 import { notFound } from "next/navigation";
 import AppLayout from "@/components/AppLayout";
 import IconTile from "@/components/IconTile";
-import { AddToPlanButton, AddBundleButton } from "@/components/ProductActions";
+import {
+  AddToPlanButton,
+  AddBundleButton,
+  AddBundleItemButton,
+} from "@/components/ProductActions";
 import { getBundle, getProductBySlug } from "@/lib/catalog";
 import { cheapestPrice } from "@/lib/recommendation/engine";
 import { getPlanIds } from "@/lib/session";
@@ -86,6 +90,7 @@ export default async function ProductDetailPage({
                 <span className="text-sm text-ink-soft tabular-nums">
                   ฿{cheapestPrice(b).toLocaleString()}
                 </span>
+                <AddBundleItemButton productId={b.id} inPlan={planIds.has(b.id)} />
               </div>
             ))}
             <div className="flex items-center justify-between bg-cream-sunk p-3">

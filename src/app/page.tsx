@@ -23,7 +23,7 @@ export default function Home() {
           ง่าย ๆ ตามงบ
         </h1>
         <p className="mx-auto mt-3 max-w-sm text-lg text-ink-soft">
-          BuyBuddy ช่วยแนะนำว่าต้องซื้ออะไร คุ้มสุดที่ร้านไหน และวางแผนไม่ให้เกินงบ
+          ย้ายเข้าห้องใหม่ต้องซื้ออะไรบ้าง? บอกเรามาเลย เดี๋ยวจัดของให้ครบ คุ้มสุด ไม่บานปลาย 💛
         </p>
 
         <div className="mt-8 space-y-3">

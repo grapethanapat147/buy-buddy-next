@@ -2,7 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getPlanIds, setPlanIds, setSpec } from "@/lib/session";
+import {
+  getPlanIds,
+  getRestockSchedule,
+  setPlanIds,
+  setRestockSchedule,
+  setSpec,
+} from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import type { Spec } from "@/lib/recommendation/types";
 
@@ -43,6 +49,29 @@ export async function removeFromPlan(productId: number) {
   const ids = await getPlanIds();
   await setPlanIds(ids.filter((id) => id !== productId));
   revalidatePlanPages();
+}
+
+/** Assign a restock item to a day of the month (1–31) on the buy calendar. */
+export async function setRestockDay(productId: number, day: number) {
+  const clamped = Math.min(31, Math.max(1, Math.round(day)));
+  const schedule = await getRestockSchedule();
+  const key = String(productId);
+  schedule[key] = { day: clamped, done: schedule[key]?.done ?? false };
+  await setRestockSchedule(schedule);
+  revalidatePath("/plan");
+}
+
+/** Toggle whether a restock item has been bought this cycle. */
+export async function toggleRestockDone(productId: number, day: number) {
+  const schedule = await getRestockSchedule();
+  const key = String(productId);
+  const current = schedule[key];
+  schedule[key] = {
+    day: current?.day ?? Math.min(31, Math.max(1, Math.round(day))),
+    done: !(current?.done ?? false),
+  };
+  await setRestockSchedule(schedule);
+  revalidatePath("/plan");
 }
 
 /** Save the current cookie plan to the signed-in user's account (Supabase). */

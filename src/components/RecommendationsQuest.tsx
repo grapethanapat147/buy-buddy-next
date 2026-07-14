@@ -153,7 +153,11 @@ export default function RecommendationsQuest({
                 {cat.items.map((it) => (
                   <div
                     key={it.productId}
-                    className="flex items-center gap-3 rounded-xl border border-ink/8 bg-cream-card p-3 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift"
+                    className={`flex items-center gap-3 rounded-xl border p-3 shadow-soft transition hover:-translate-y-0.5 hover:shadow-lift ${
+                      it.inPlan
+                        ? "border-emerald-200 bg-emerald-50"
+                        : "border-ink/8 bg-cream-card"
+                    }`}
                   >
                     <IconTile icon={it.icon} />
                     <div className="min-w-0 flex-1">
@@ -190,7 +194,7 @@ export default function RecommendationsQuest({
         href="/plan"
         className="mt-6 block rounded-full bg-brand p-4 text-center text-lg font-semibold text-white shadow-soft transition hover:bg-brand-500 active:scale-[0.98]"
       >
-        ดูแผนของฉัน
+        ไปดูกระเป๋าของฉัน →
       </Link>
 
       <AnimatePresence>

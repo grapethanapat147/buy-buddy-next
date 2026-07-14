@@ -1,13 +1,16 @@
 import AppLayout from "@/components/AppLayout";
-import PlanView, {
-  type PlanLine,
-  type RestockGroup,
-} from "@/components/PlanView";
+import PlanView, { type PlanLine } from "@/components/PlanView";
+import { type RestockItem } from "@/components/RestockCalendar";
 import { getProducts } from "@/lib/catalog";
 import { cheapestPrice, storeRollup, summarizePlan } from "@/lib/recommendation/engine";
 import { tierPriority } from "@/lib/recommendation/types";
-import { getPlanIds, getSpec } from "@/lib/session";
+import { getPlanIds, getRestockSchedule, getSpec } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
+
+/** Spread items across the month deterministically when the user hasn't picked a day yet. */
+function defaultDay(productId: number): number {
+  return ((productId * 7) % 28) + 1;
+}
 
 export default async function PlanPage() {
   const planIds = await getPlanIds();
@@ -49,30 +52,22 @@ export default async function PlanPage() {
     withQty.map(({ product, qty }) => ({ product, qty })),
   );
 
-  const restockOrder = ["weekly", "monthly"];
-  const restockMap = new Map<string, RestockGroup["items"]>();
-  for (const p of planProducts) {
-    if (p.mode !== "restock") {
-      continue;
-    }
-    const cadence = p.restockCadence ?? "other";
-    if (!restockMap.has(cadence)) {
-      restockMap.set(cadence, []);
-    }
-    restockMap.get(cadence)!.push({
-      id: p.id,
-      icon: p.icon,
-      name: p.name,
-      price: cheapestPrice(p),
-    });
-  }
-  const restock: RestockGroup[] = [...restockMap.keys()]
-    .sort((a, b) => {
-      const ia = restockOrder.indexOf(a);
-      const ib = restockOrder.indexOf(b);
-      return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+  const schedule = await getRestockSchedule();
+  const restockItems: RestockItem[] = planProducts
+    .filter((p) => p.mode === "restock")
+    .map((p) => {
+      const slot = schedule[String(p.id)];
+      return {
+        id: p.id,
+        icon: p.icon,
+        name: p.name,
+        price: cheapestPrice(p),
+        cadence: p.restockCadence ?? "other",
+        day: slot?.day ?? defaultDay(p.id),
+        done: slot?.done ?? false,
+      };
     })
-    .map((cadence) => ({ cadence, items: restockMap.get(cadence)! }));
+    .sort((a, b) => a.day - b.day);
 
   const supabase = await createClient();
   const {
@@ -88,7 +83,7 @@ export default async function PlanPage() {
         overBudgetBy={summary.overBudgetBy}
         mustExceedsBudget={summary.mustExceedsBudget}
         storeRollup={rollup}
-        restock={restock}
+        restockItems={restockItems}
         isLoggedIn={Boolean(user)}
       />
     </AppLayout>

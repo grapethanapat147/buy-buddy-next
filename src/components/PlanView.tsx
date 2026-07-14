@@ -4,15 +4,13 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import BudgetMeter from "./BudgetMeter";
+import Mascot from "./Mascot";
+import RestockCalendar, { type RestockItem } from "./RestockCalendar";
 import { celebrate } from "@/lib/celebrate";
 import { removeFromPlan, savePlanToAccount } from "@/app/actions";
 import { tierLabel, type ProductTier } from "@/lib/recommendation/types";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-const cadenceLabel: Record<string, string> = {
-  weekly: "รายสัปดาห์",
-  monthly: "รายเดือน",
-};
 
 export type PlanLine = {
   productId: number;
@@ -46,11 +44,6 @@ function FilterChip({
     </button>
   );
 }
-
-export type RestockGroup = {
-  cadence: string;
-  items: Array<{ id: number; icon: string; name: string; price: number }>;
-};
 
 function Tab({
   active,
@@ -106,7 +99,7 @@ export default function PlanView({
   overBudgetBy,
   mustExceedsBudget,
   storeRollup,
-  restock,
+  restockItems,
   isLoggedIn,
 }: {
   items: PlanLine[];
@@ -115,7 +108,7 @@ export default function PlanView({
   overBudgetBy: number;
   mustExceedsBudget: boolean;
   storeRollup: Array<{ platform: string; total: number }>;
-  restock: RestockGroup[];
+  restockItems: RestockItem[];
   isLoggedIn: boolean;
 }) {
   const [tab, setTab] = useState<"list" | "calendar">("list");
@@ -135,14 +128,20 @@ export default function PlanView({
 
   return (
     <>
-      <h1 className="text-2xl font-semibold text-ink">แผนของฉัน</h1>
+      <div className="flex items-center gap-2">
+        <Mascot mood="holding" size={40} />
+        <div>
+          <h1 className="text-2xl font-semibold text-ink">กระเป๋าของฉัน</h1>
+          <p className="text-xs text-ink-soft">ของที่เลือกไว้ + วันซื้อของ ครบในที่เดียว</p>
+        </div>
+      </div>
 
       <div className="mt-3 flex gap-5 border-b border-ink/10">
         <Tab active={tab === "list"} onClick={() => setTab("list")}>
-          รายการ
+          ของในกระเป๋า
         </Tab>
         <Tab active={tab === "calendar"} onClick={() => setTab("calendar")}>
-          ปฏิทิน
+          📅 ปฏิทินซื้อของ
         </Tab>
       </div>
 
@@ -241,9 +240,14 @@ export default function PlanView({
           </div>
 
           {items.length === 0 && (
-            <p className="py-8 text-center text-sm text-ink-muted">
-              ยังไม่มีของ เริ่มเก็บกันเลย!
-            </p>
+            <div className="flex flex-col items-center gap-3 py-10 text-center">
+              <Mascot mood="happy" size={72} />
+              <p className="text-sm text-ink-muted">
+                กระเป๋ายังว่างอยู่เลย~
+                <br />
+                ไปเลือกของที่ถูกใจมาใส่กันเถอะ 🛍️
+              </p>
+            </div>
           )}
 
           {storeRollup.length > 0 && (
@@ -257,36 +261,7 @@ export default function PlanView({
         </>
       )}
 
-      {tab === "calendar" && (
-        <div className="mt-4">
-          {restock.length > 0 ? (
-            restock.map((group) => (
-              <div key={group.cadence} className="mb-4">
-                <div className="mb-2 text-sm font-semibold text-ink">
-                  {cadenceLabel[group.cadence] ?? group.cadence}
-                </div>
-                <div className="divide-y divide-ink/5 rounded-xl border border-ink/8">
-                  {group.items.map((it) => (
-                    <div key={it.id} className="flex items-center gap-2 p-3">
-                      <span className="text-lg" aria-hidden="true">
-                        {it.icon}
-                      </span>
-                      <span className="flex-1 text-sm text-ink">{it.name}</span>
-                      <span className="text-sm text-ink-soft tabular-nums">
-                        ฿{it.price.toLocaleString()}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="py-8 text-center text-sm text-ink-muted">
-              ยังไม่มีของสิ้นเปลืองในแผน — เพิ่มของหมวด Restock เพื่อวางแผนซื้อซ้ำ
-            </p>
-          )}
-        </div>
-      )}
+      {tab === "calendar" && <RestockCalendar items={restockItems} />}
 
       <div className="mt-6 border-t border-ink/10 pt-4">
         {isLoggedIn ? (

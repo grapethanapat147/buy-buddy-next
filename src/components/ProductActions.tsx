@@ -36,6 +36,41 @@ export function AddToPlanButton({
   );
 }
 
+export function AddBundleItemButton({
+  productId,
+  inPlan,
+}: {
+  productId: number;
+  inPlan: boolean;
+}) {
+  const [pending, startTransition] = useTransition();
+
+  const toggle = () =>
+    startTransition(async () => {
+      if (inPlan) {
+        await removeFromPlan(productId);
+      } else {
+        await addToPlan(productId);
+      }
+    });
+
+  return (
+    <button
+      onClick={toggle}
+      disabled={pending}
+      className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold transition active:scale-90 focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none disabled:opacity-60 ${
+        inPlan
+          ? "bg-emerald-100 text-emerald-700"
+          : "bg-brand-50 text-brand-700 hover:bg-brand-100"
+      }`}
+    >
+      <span className="animate-pop" key={String(inPlan)}>
+        {inPlan ? "✓ เพิ่มแล้ว" : "+ เพิ่ม"}
+      </span>
+    </button>
+  );
+}
+
 export function AddBundleButton({ ids }: { ids: number[] }) {
   const [pending, startTransition] = useTransition();
 
