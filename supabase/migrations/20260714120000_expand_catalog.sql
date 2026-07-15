@@ -3,7 +3,8 @@
 -- has_aircon) into product triggers.
 
 insert into public.categories (name, slug, sort_order, icon) values
-  ('เฟอร์นิเจอร์', 'furniture', 7, '🪑');
+  ('เฟอร์นิเจอร์', 'furniture', 7, '🪑')
+on conflict (slug) do nothing;
 
 insert into public.products (category_id, name, slug, tier, mode, ref_price, restock_cadence, qty_scales_by, triggers, icon) values
   -- ── ทำความสะอาด: ซักผ้า/ทำความสะอาดแบบมีตัวเลือก ──
@@ -56,7 +57,8 @@ insert into public.products (category_id, name, slug, tier, mode, ref_price, res
 
   -- ── ของกินตุน ──
   ((select id from public.categories where slug='pantry'), 'น้ำดื่ม 6 ขวด', 'drinking-water', 'must', 'restock', 60, 'weekly', 'occupants', '[]', '💧'),
-  ((select id from public.categories where slug='pantry'), 'ชา/กาแฟ ชุดเริ่มต้น', 'coffee-tea', 'optional', 'restock', 150, 'monthly', null, '[]', '☕');
+  ((select id from public.categories where slug='pantry'), 'ชา/กาแฟ ชุดเริ่มต้น', 'coffee-tea', 'optional', 'restock', 150, 'monthly', null, '[]', '☕')
+on conflict (slug) do nothing;
 
 -- Marketplace prices for every product that doesn't have them yet (same jitter
 -- formula as the starter catalog, so the cheapest store still varies per item).
@@ -85,4 +87,5 @@ insert into public.product_pairings (product_id, paired_product_id) values
   ((select id from public.products where slug='induction-cooker'), (select id from public.products where slug='frying-pan')),
   ((select id from public.products where slug='work-desk'), (select id from public.products where slug='work-chair')),
   ((select id from public.products where slug='trash-bin'), (select id from public.products where slug='trash-bags')),
-  ((select id from public.products where slug='fabric-wardrobe'), (select id from public.products where slug='clothes-rack'));
+  ((select id from public.products where slug='fabric-wardrobe'), (select id from public.products where slug='clothes-rack'))
+on conflict do nothing;
