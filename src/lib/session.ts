@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import type { Spec } from "./recommendation/types";
+import { normalizeSpec, type Spec } from "./recommendation/types";
 
 const SPEC_COOKIE = "bb_spec";
 const PLAN_COOKIE = "bb_plan";
@@ -16,7 +16,7 @@ export async function getSpec(): Promise<Spec | null> {
   const raw = store.get(SPEC_COOKIE)?.value;
   if (!raw) return null;
   try {
-    return JSON.parse(raw) as Spec;
+    return normalizeSpec(JSON.parse(raw) as Partial<Spec>);
   } catch {
     return null;
   }

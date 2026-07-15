@@ -7,7 +7,24 @@ import Button from "@/components/ui/Button";
 
 type Choice = { key: string; label: string; options: Array<[string, string]> };
 
+/** Fixtures the room may already have — unchecked means "ไม่มี" so we recommend one. */
+const fixtures: Array<[string, string, string]> = [
+  ["has_kitchen_counter", "🍳", "เคาน์เตอร์ครัว"],
+  ["has_wardrobe", "🚪", "ตู้เสื้อผ้า"],
+  ["has_dining_table", "🍽️", "โต๊ะกินข้าว"],
+  ["has_aircon", "❄️", "แอร์"],
+];
+
 const questions: Choice[] = [
+  {
+    key: "room_size",
+    label: "ห้องขนาดประมาณไหน",
+    options: [
+      ["small", "เล็ก\n< 25 ตร.ม."],
+      ["medium", "กลาง\n25–35"],
+      ["large", "ใหญ่\n> 35"],
+    ],
+  },
   {
     key: "cooking",
     label: "ทำอาหารเองบ่อยแค่ไหน",
@@ -60,17 +77,22 @@ function SubmitButton() {
 
 export default function WizardForm() {
   const [choices, setChoices] = useState<Record<string, string>>({
+    room_size: "small",
     cooking: "sometimes",
     laundry: "own_machine",
     work_style: "office",
     spending_style: "balanced",
   });
+  const [has, setHas] = useState<Record<string, boolean>>({});
 
   return (
     <form action={saveSpecForm}>
       <input type="hidden" name="room_type" value="studio" />
       {Object.entries(choices).map(([key, value]) => (
         <input key={key} type="hidden" name={key} value={value} />
+      ))}
+      {fixtures.map(([key]) => (
+        <input key={key} type="hidden" name={key} value={has[key] ? "yes" : "no"} />
       ))}
 
       <h1 className="text-2xl font-bold text-ink">ตั้งค่าห้องของคุณ</h1>
@@ -94,7 +116,7 @@ export default function WizardForm() {
                   type="button"
                   aria-pressed={active}
                   onClick={() => setChoices((c) => ({ ...c, [q.key]: val }))}
-                  className={`rounded-2xl border p-3 text-base transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+                  className={`whitespace-pre-line rounded-2xl border p-3 text-base leading-snug transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
                     active
                       ? "border-2 border-brand bg-brand-50 font-semibold text-brand-700"
                       : "border-ink/10 text-ink-soft hover:bg-cream-sunk"
@@ -107,6 +129,37 @@ export default function WizardForm() {
           </div>
         </div>
       ))}
+
+      <div className="mt-6">
+        <p className="text-base font-medium text-ink">ในห้องมีอะไรอยู่แล้วบ้าง</p>
+        <p className="mt-0.5 text-sm text-ink-muted">
+          เลือกได้หลายข้อ · ที่ไม่ได้เลือก เดี๋ยวเราหามาให้ 😉
+        </p>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          {fixtures.map(([key, emoji, label]) => {
+            const active = Boolean(has[key]);
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setHas((h) => ({ ...h, [key]: !h[key] }))}
+                className={`flex items-center gap-2 rounded-2xl border p-3 text-base transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+                  active
+                    ? "border-2 border-brand bg-brand-50 font-semibold text-brand-700"
+                    : "border-ink/10 text-ink-soft hover:bg-cream-sunk"
+                }`}
+              >
+                <span aria-hidden="true">{emoji}</span>
+                <span className="flex-1 text-left">{label}</span>
+                <span aria-hidden="true" className={active ? "text-brand" : "text-ink-muted/40"}>
+                  {active ? "✓" : "＋"}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <SubmitButton />
     </form>

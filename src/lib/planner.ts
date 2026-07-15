@@ -4,6 +4,10 @@ import type { Spec } from "./recommendation/types";
 export const specSchema = z.object({
   budget: z.number().describe("งบประมาณเป็นบาท เช่น 5000"),
   roomType: z.string().describe("ประเภทห้อง เช่น studio").default("studio"),
+  room_size: z
+    .enum(["small", "medium", "large"])
+    .describe("ขนาดห้อง: small (<25 ตร.ม.), medium (25-35), large (>35)")
+    .default("small"),
   occupants: z.number().int().min(1).describe("จำนวนคนที่อยู่ในห้อง"),
   cooking: z.enum(["never", "sometimes", "often"]).describe("ความถี่ในการทำอาหาร"),
   laundry: z.enum(["own_machine", "hand", "service"]).describe("วิธีซักผ้า"),
@@ -11,6 +15,10 @@ export const specSchema = z.object({
   spending_style: z
     .enum(["essentials", "balanced", "comfort"])
     .describe("สไตล์การใช้จ่าย"),
+  has_kitchen_counter: z.boolean().describe("ห้องมีเคาน์เตอร์ครัวอยู่แล้วไหม").default(false),
+  has_wardrobe: z.boolean().describe("ห้องมีตู้เสื้อผ้าอยู่แล้วไหม").default(false),
+  has_dining_table: z.boolean().describe("ห้องมีโต๊ะกินข้าวอยู่แล้วไหม").default(false),
+  has_aircon: z.boolean().describe("ห้องมีแอร์อยู่แล้วไหม").default(false),
 });
 
 export type SpecShape = z.infer<typeof specSchema>;
@@ -19,11 +27,16 @@ function toSpec(shape: SpecShape): Spec {
   return {
     budget: shape.budget,
     roomType: shape.roomType || "studio",
+    roomSize: shape.room_size,
     occupants: shape.occupants,
     cooking: shape.cooking,
     laundry: shape.laundry,
     workStyle: shape.work_style,
     spendingStyle: shape.spending_style,
+    hasKitchenCounter: shape.has_kitchen_counter,
+    hasWardrobe: shape.has_wardrobe,
+    hasDiningTable: shape.has_dining_table,
+    hasAircon: shape.has_aircon,
     ownedProductIds: [],
   };
 }
@@ -32,8 +45,24 @@ function toSpec(shape: SpecShape): Spec {
 export function heuristicParse(text: string): Spec {
   const t = text.toLowerCase();
 
-  const numbers = (text.match(/\d[\d,]*/g) ?? []).map((n) => Number(n.replace(/,/g, "")));
+  const sqmMatch = text.match(/(\d+)\s*(?:ตร\.?\s?ม\.?|ตารางเมตร|sqm|sq\.?m)/i);
+  const sqm = sqmMatch ? Number(sqmMatch[1]) : null;
+
+  const numbers = (text.match(/\d[\d,]*/g) ?? [])
+    .map((n) => Number(n.replace(/,/g, "")))
+    .filter((n) => n !== sqm);
   const budget = numbers.length ? Math.max(...numbers) : 5000;
+
+  let roomSize: Spec["roomSize"] = "small";
+  if (sqm !== null) {
+    roomSize = sqm > 35 ? "large" : sqm >= 25 ? "medium" : "small";
+  } else if (/ห้องใหญ่|กว้าง|large/.test(t)) {
+    roomSize = "large";
+  } else if (/ห้องเล็ก|ห้องแคบ|คับแคบ|small/.test(t)) {
+    roomSize = "small";
+  }
+
+  const hasFixture = (re: RegExp) => re.test(t);
 
   let occupants = 1;
   const occMatch = text.match(/(\d+)\s*คน/);
@@ -78,11 +107,16 @@ export function heuristicParse(text: string): Spec {
   return {
     budget,
     roomType: "studio",
+    roomSize,
     occupants,
     cooking,
     laundry,
     workStyle,
     spendingStyle,
+    hasKitchenCounter: hasFixture(/มีเคาน์เตอร์|มีเคาเตอร์|เคาน์เตอร์ครัวแล้ว|มีครัวอยู่แล้ว/),
+    hasWardrobe: hasFixture(/มีตู้เสื้อผ้า|ตู้เสื้อผ้าแล้ว|มีตู้อยู่แล้ว|บิวท์อิน/),
+    hasDiningTable: hasFixture(/มีโต๊ะกินข้าว|มีโต๊ะอาหาร|โต๊ะกินข้าวแล้ว/),
+    hasAircon: hasFixture(/มีแอร์|แอร์แล้ว|มีเครื่องปรับอากาศ/),
     ownedProductIds: [],
   };
 }

@@ -42,12 +42,40 @@ export interface Product {
 export interface Spec {
     budget: number;
     roomType: string;
+    /** 'small' (<25 ตร.ม.) | 'medium' (25–35) | 'large' (>35) */
+    roomSize: string;
     occupants: number;
     cooking: string;
     laundry: string;
     workStyle: string;
     spendingStyle: string;
+    /** Fixtures the room already has — when false, we recommend buying one. */
+    hasKitchenCounter: boolean;
+    hasWardrobe: boolean;
+    hasDiningTable: boolean;
+    hasAircon: boolean;
     ownedProductIds: number[];
+}
+
+export const defaultSpec: Spec = {
+    budget: 5000,
+    roomType: 'studio',
+    roomSize: 'small',
+    occupants: 1,
+    cooking: 'sometimes',
+    laundry: 'own_machine',
+    workStyle: 'office',
+    spendingStyle: 'balanced',
+    hasKitchenCounter: false,
+    hasWardrobe: false,
+    hasDiningTable: false,
+    hasAircon: false,
+    ownedProductIds: [],
+};
+
+/** Fill in any field an older stored spec cookie is missing. */
+export function normalizeSpec(raw: Partial<Spec> | null | undefined): Spec {
+    return { ...defaultSpec, ...(raw ?? {}) };
 }
 
 export interface RecommendationItem {

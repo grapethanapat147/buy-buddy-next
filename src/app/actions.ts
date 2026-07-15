@@ -26,14 +26,20 @@ export async function saveSpec(spec: Spec, redirectTo = "/recommendations") {
 }
 
 export async function saveSpecForm(formData: FormData) {
+  const yes = (field: string) => formData.get(field) === "yes";
   const spec: Spec = {
     budget: Number(formData.get("budget")) || 5000,
     roomType: String(formData.get("room_type") ?? "studio"),
+    roomSize: String(formData.get("room_size") ?? "small"),
     occupants: Number(formData.get("occupants")) || 1,
     cooking: String(formData.get("cooking") ?? "sometimes"),
     laundry: String(formData.get("laundry") ?? "own_machine"),
     workStyle: String(formData.get("work_style") ?? "office"),
     spendingStyle: String(formData.get("spending_style") ?? "balanced"),
+    hasKitchenCounter: yes("has_kitchen_counter"),
+    hasWardrobe: yes("has_wardrobe"),
+    hasDiningTable: yes("has_dining_table"),
+    hasAircon: yes("has_aircon"),
     ownedProductIds: [],
   };
   await saveSpec(spec);

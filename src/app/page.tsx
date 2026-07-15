@@ -31,7 +31,7 @@ export default function Home() {
             href="/wizard"
             className="block rounded-full bg-brand p-4 text-center text-lg font-semibold text-white shadow-soft transition hover:bg-brand-500 active:scale-[0.98]"
           >
-            เริ่มเลย — ตอบ 4 ข้อ
+            เริ่มเลย — ตอบไม่กี่ข้อ
           </Link>
           <Link
             href="/explore"

@@ -1,19 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { cheapestPrice, passesTriggers, recommend, storeRollup, summarizePlan } from './engine';
-import type { Product, ProductTier, Spec } from './types';
+import { defaultSpec, type Product, type ProductTier, type Spec } from './types';
 
 function spec(overrides: Partial<Spec> = {}): Spec {
-    return {
-        budget: 5000,
-        roomType: 'studio',
-        occupants: 1,
-        cooking: 'sometimes',
-        laundry: 'own_machine',
-        workStyle: 'office',
-        spendingStyle: 'balanced',
-        ownedProductIds: [],
-        ...overrides,
-    };
+    return { ...defaultSpec, ...overrides };
 }
 
 let nextId = 1;
@@ -43,6 +33,30 @@ describe('triggers', () => {
         expect(passesTriggers([{ field: 'cooking', op: 'in', value: ['sometimes', 'often'] }], spec({ cooking: 'never' }))).toBe(false);
         expect(passesTriggers([{ field: 'occupants', op: '>=', value: 2 }], spec({ occupants: 2 }))).toBe(true);
         expect(passesTriggers([{ field: 'cooking', op: '=', value: 'often' }, { field: 'occupants', op: '>=', value: 2 }], spec({ cooking: 'often', occupants: 1 }))).toBe(false);
+    });
+    it('matches room_size', () => {
+        expect(passesTriggers([{ field: 'room_size', op: '=', value: 'small' }], spec({ roomSize: 'small' }))).toBe(true);
+        expect(passesTriggers([{ field: 'room_size', op: '=', value: 'small' }], spec({ roomSize: 'large' }))).toBe(false);
+        expect(passesTriggers([{ field: 'room_size', op: 'in', value: ['medium', 'large'] }], spec({ roomSize: 'large' }))).toBe(true);
+    });
+    it('maps "has_*" fixtures to yes/no so missing ones are recommended', () => {
+        // A product triggered by "no wardrobe" shows only when the room has none.
+        const noWardrobe = [{ field: 'has_wardrobe', op: '=' as const, value: 'no' }];
+        expect(passesTriggers(noWardrobe, spec({ hasWardrobe: false }))).toBe(true);
+        expect(passesTriggers(noWardrobe, spec({ hasWardrobe: true }))).toBe(false);
+
+        expect(passesTriggers([{ field: 'has_dining_table', op: '=', value: 'no' }], spec({ hasDiningTable: true }))).toBe(false);
+        expect(passesTriggers([{ field: 'has_kitchen_counter', op: '=', value: 'no' }], spec({ hasKitchenCounter: false }))).toBe(true);
+        expect(passesTriggers([{ field: 'has_aircon', op: '=', value: 'no' }], spec({ hasAircon: true }))).toBe(false);
+    });
+    it('hides fixture products the room already has', () => {
+        const wardrobe = product({ tier: 'must', triggers: [{ field: 'has_wardrobe', op: '=', value: 'no' }] });
+        const fan = product({ tier: 'must' });
+        const ids = (s: Spec) => recommend([wardrobe, fan], s).map((i) => i.productId);
+
+        expect(ids(spec({ hasWardrobe: false }))).toContain(wardrobe.id);
+        expect(ids(spec({ hasWardrobe: true }))).not.toContain(wardrobe.id);
+        expect(ids(spec({ hasWardrobe: true }))).toContain(fan.id);
     });
 });
 

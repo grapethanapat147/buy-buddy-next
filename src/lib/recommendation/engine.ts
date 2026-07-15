@@ -21,6 +21,8 @@ function specValue(spec: Spec, field: string): string | number {
             return spec.budget;
         case 'room_type':
             return spec.roomType;
+        case 'room_size':
+            return spec.roomSize;
         case 'occupants':
             return spec.occupants;
         case 'cooking':
@@ -31,6 +33,14 @@ function specValue(spec: Spec, field: string): string | number {
             return spec.workStyle;
         case 'spending_style':
             return spec.spendingStyle;
+        case 'has_kitchen_counter':
+            return spec.hasKitchenCounter ? 'yes' : 'no';
+        case 'has_wardrobe':
+            return spec.hasWardrobe ? 'yes' : 'no';
+        case 'has_dining_table':
+            return spec.hasDiningTable ? 'yes' : 'no';
+        case 'has_aircon':
+            return spec.hasAircon ? 'yes' : 'no';
         default:
             return '';
     }
