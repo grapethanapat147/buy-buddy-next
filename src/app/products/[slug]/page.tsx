@@ -7,6 +7,7 @@ import {
   AddBundleItemButton,
 } from "@/components/ProductActions";
 import { getBundle, getProductBySlug } from "@/lib/catalog";
+import { buyUrlFor } from "@/lib/marketplace";
 import { cheapestPrice } from "@/lib/recommendation/engine";
 import { getPlanIds } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
@@ -30,15 +31,16 @@ export default async function ProductDetailPage({
     : [{ platform: "ราคาอ้างอิง", price: product.refPrice }];
   const cheapest = sortedPrices[0];
 
+  // Prefer a real stored deep link per platform; otherwise a marketplace search.
   const supabase = await createClient();
-  const { data: cheapestRow } = await supabase
+  const { data: priceRows } = await supabase
     .from("product_prices")
-    .select("url")
-    .eq("product_id", product.id)
-    .order("price")
-    .limit(1)
-    .maybeSingle();
-  const buyUrl: string | null = cheapestRow?.url ?? null;
+    .select("platform, url")
+    .eq("product_id", product.id);
+  const storedUrl = new Map((priceRows ?? []).map((r) => [r.platform, r.url as string | null]));
+  const shopUrl = (platform: string) =>
+    buyUrlFor(platform, product.name, storedUrl.get(platform));
+  const cheapestUrl = shopUrl(cheapest.platform);
 
   const bundleTotal = bundle.reduce((s, b) => s + cheapestPrice(b), 0);
 
@@ -52,26 +54,49 @@ export default async function ProductDetailPage({
       <div className="mt-3 overflow-hidden rounded-xl border border-ink/10 bg-cream-card shadow-soft">
         <div className="flex items-center justify-between p-3">
           <span className="text-sm font-semibold text-ink">เทียบราคาจากร้านค้า</span>
-          <span className="text-xs text-ink-muted">ราคาอ้างอิง</span>
+          <span className="text-xs text-ink-muted">แตะร้าน = ไปซื้อ ↗</span>
         </div>
-        {sortedPrices.map((pr, i) => (
-          <div
-            key={pr.platform}
-            className={`flex items-center justify-between border-t border-ink/8 p-3 ${
-              i === 0 ? "bg-emerald-50 text-emerald-700" : "text-ink"
-            }`}
-          >
-            <span className="flex items-center gap-2 text-sm font-semibold">
-              {pr.platform}
-              {i === 0 && (
-                <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[11px] font-semibold text-white">
-                  คุ้มสุด
-                </span>
-              )}
-            </span>
-            <span className="font-semibold tabular-nums">฿{pr.price.toLocaleString()}</span>
-          </div>
-        ))}
+        {sortedPrices.map((pr, i) => {
+          const url = shopUrl(pr.platform);
+          const rowClass = `flex items-center justify-between border-t border-ink/8 p-3 ${
+            i === 0 ? "bg-emerald-50 text-emerald-700" : "text-ink"
+          } ${url ? "transition hover:bg-cream-sunk active:scale-[0.99]" : ""}`;
+          const inner = (
+            <>
+              <span className="flex items-center gap-2 text-sm font-semibold">
+                {pr.platform}
+                {i === 0 && (
+                  <span className="rounded-full bg-emerald-600 px-2 py-0.5 text-[11px] font-semibold text-white">
+                    คุ้มสุด
+                  </span>
+                )}
+              </span>
+              <span className="flex items-center gap-1.5 font-semibold tabular-nums">
+                ฿{pr.price.toLocaleString()}
+                {url && (
+                  <span aria-hidden="true" className="text-xs opacity-50">
+                    ↗
+                  </span>
+                )}
+              </span>
+            </>
+          );
+          return url ? (
+            <a
+              key={pr.platform}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={rowClass}
+            >
+              {inner}
+            </a>
+          ) : (
+            <div key={pr.platform} className={rowClass}>
+              {inner}
+            </div>
+          );
+        })}
       </div>
 
       {bundle.length > 0 && (
@@ -105,14 +130,15 @@ export default async function ProductDetailPage({
 
       <AddToPlanButton productId={product.id} inPlan={planIds.has(product.id)} />
 
-      {buyUrl && (
+      {cheapestUrl && (
         <a
-          href={buyUrl}
+          href={cheapestUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 block rounded-full border border-ink/15 p-4 text-center text-lg font-semibold text-ink transition hover:bg-cream-sunk active:scale-[0.98]"
+          className="mt-2 flex items-center justify-center gap-2 rounded-full border border-ink/15 p-4 text-center text-lg font-semibold text-ink transition hover:bg-cream-sunk active:scale-[0.98]"
         >
-          ไปซื้อจริงที่ {cheapest.platform}
+          🛒 ไปซื้อที่ {cheapest.platform} · ฿{cheapest.price.toLocaleString()}
+          <span aria-hidden="true">↗</span>
         </a>
       )}
     </AppLayout>
