@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { cheapestPrice, passesTriggers, recommend, storeRollup, summarizePlan } from './engine';
-import { defaultSpec, type Product, type ProductTier, type Spec } from './types';
+import { defaultSpec, normalizeSpec, type Product, type ProductTier, type Spec } from './types';
 
 function spec(overrides: Partial<Spec> = {}): Spec {
     return { ...defaultSpec, ...overrides };
@@ -132,5 +132,33 @@ describe('storeRollup', () => {
         const rows = storeRollup([{ product: a, qty: 1 }, { product: b, qty: 2 }]);
         expect(rows[0]).toEqual({ platform: 'Shopee', total: 500 });
         expect(rows[1]).toEqual({ platform: 'Lazada', total: 520 });
+    });
+});
+
+describe('normalizeSpec', () => {
+    it('keeps owned ids and fills fields an older cookie is missing', () => {
+        const s = normalizeSpec({ budget: 9000, ownedProductIds: [4, 7] });
+
+        expect(s.budget).toBe(9000);
+        expect(s.ownedProductIds).toEqual([4, 7]);
+        expect(s.cooking).toBe(defaultSpec.cooking);
+    });
+
+    it('coerces a malformed ownedProductIds so recommend() cannot crash on .includes()', () => {
+        const bad = (value: unknown) => normalizeSpec({ ownedProductIds: value as number[] }).ownedProductIds;
+
+        expect(bad('nope')).toEqual([]);
+        expect(bad(undefined)).toEqual([]);
+        expect(normalizeSpec(null).ownedProductIds).toEqual([]);
+        expect(bad(['3', 0, -1, 'x'])).toEqual([3]);
+    });
+
+    it('still recommends normally after normalizing a spec that owns an item', () => {
+        const owned = product({ tier: 'must', refPrice: 100 });
+        const keep = product({ tier: 'must', refPrice: 100 });
+
+        const result = recommend([owned, keep], normalizeSpec({ ownedProductIds: [owned.id] }));
+
+        expect(result.map((i) => i.productId)).toEqual([keep.id]);
     });
 });

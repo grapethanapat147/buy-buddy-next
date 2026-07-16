@@ -40,7 +40,10 @@ export async function saveSpecForm(formData: FormData) {
     hasWardrobe: yes("has_wardrobe"),
     hasDiningTable: yes("has_dining_table"),
     hasAircon: yes("has_aircon"),
-    ownedProductIds: [],
+    ownedProductIds: formData
+      .getAll("owned")
+      .map((v) => Number(v))
+      .filter((id) => Number.isInteger(id) && id > 0),
   };
   await saveSpec(spec);
 }

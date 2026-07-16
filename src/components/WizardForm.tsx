@@ -7,6 +7,9 @@ import Button from "@/components/ui/Button";
 
 type Choice = { key: string; label: string; options: Array<[string, string]> };
 
+/** A catalog item the wizard asks about under "ของพวกนี้มีอยู่แล้วไหม". */
+export type OwnedCandidate = { id: number; icon: string; name: string };
+
 /** Fixtures the room may already have — unchecked means "ไม่มี" so we recommend one. */
 const fixtures: Array<[string, string, string]> = [
   ["has_kitchen_counter", "🍳", "เคาน์เตอร์ครัว"],
@@ -75,7 +78,11 @@ function SubmitButton() {
   );
 }
 
-export default function WizardForm() {
+export default function WizardForm({
+  ownedCandidates = [],
+}: {
+  ownedCandidates?: OwnedCandidate[];
+}) {
   const [choices, setChoices] = useState<Record<string, string>>({
     room_size: "small",
     cooking: "sometimes",
@@ -84,6 +91,9 @@ export default function WizardForm() {
     spending_style: "balanced",
   });
   const [has, setHas] = useState<Record<string, boolean>>({});
+  const [owned, setOwned] = useState<Record<number, boolean>>({});
+
+  const ownedIds = ownedCandidates.filter((c) => owned[c.id]).map((c) => c.id);
 
   return (
     <form action={saveSpecForm}>
@@ -93,6 +103,9 @@ export default function WizardForm() {
       ))}
       {fixtures.map(([key]) => (
         <input key={key} type="hidden" name={key} value={has[key] ? "yes" : "no"} />
+      ))}
+      {ownedIds.map((id) => (
+        <input key={id} type="hidden" name="owned" value={id} />
       ))}
 
       <h1 className="text-2xl font-bold text-ink">ตั้งค่าห้องของคุณ</h1>
@@ -160,6 +173,44 @@ export default function WizardForm() {
           })}
         </div>
       </div>
+
+      {ownedCandidates.length > 0 && (
+        <div className="mt-6">
+          <p className="text-base font-medium text-ink">ของพวกนี้มีอยู่แล้วไหม</p>
+          <p className="mt-0.5 text-sm text-ink-muted">
+            เลือกที่มีอยู่แล้ว เดี๋ยวเราไม่แนะนำซ้ำ · จะได้เหลืองบไปซื้ออย่างอื่น 💸
+          </p>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            {ownedCandidates.map((c) => {
+              const active = Boolean(owned[c.id]);
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setOwned((o) => ({ ...o, [c.id]: !o[c.id] }))}
+                  className={`flex items-center gap-2 rounded-2xl border p-3 text-base transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+                    active
+                      ? "border-2 border-brand bg-brand-50 font-semibold text-brand-700"
+                      : "border-ink/10 text-ink-soft hover:bg-cream-sunk"
+                  }`}
+                >
+                  <span aria-hidden="true">{c.icon}</span>
+                  <span className="flex-1 text-left leading-snug">{c.name}</span>
+                  <span aria-hidden="true" className={active ? "text-brand" : "text-ink-muted/40"}>
+                    {active ? "✓" : "＋"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {ownedIds.length > 0 && (
+            <p className="mt-2 text-sm text-emerald-600">
+              ✓ มีอยู่แล้ว {ownedIds.length} อย่าง — จะไม่แนะนำซ้ำนะ
+            </p>
+          )}
+        </div>
+      )}
 
       <SubmitButton />
     </form>

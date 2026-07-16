@@ -75,7 +75,14 @@ export const defaultSpec: Spec = {
 
 /** Fill in any field an older stored spec cookie is missing. */
 export function normalizeSpec(raw: Partial<Spec> | null | undefined): Spec {
-    return { ...defaultSpec, ...(raw ?? {}) };
+    const merged = { ...defaultSpec, ...(raw ?? {}) };
+
+    // recommend() calls .includes() on this, so a malformed cookie must not get through.
+    merged.ownedProductIds = Array.isArray(merged.ownedProductIds)
+        ? merged.ownedProductIds.map(Number).filter((id) => Number.isInteger(id) && id > 0)
+        : [];
+
+    return merged;
 }
 
 export interface RecommendationItem {
