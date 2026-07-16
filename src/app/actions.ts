@@ -2,9 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { mergePlanIds } from "@/lib/plan";
 import {
   getPlanIds,
   getRestockSchedule,
+  getSpec,
   setPlanIds,
   setRestockSchedule,
   setSpec,
@@ -92,16 +94,32 @@ export async function savePlanToAccount() {
   if (!user) redirect("/login");
 
   const ids = await getPlanIds();
+  const spec = await getSpec();
+
+  const { data: existing } = await supabase
+    .from("plans")
+    .select("id, plan_products(product_id)")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const savedIds: number[] = (existing?.plan_products ?? []).map(
+    (r: { product_id: number }) => r.product_id,
+  );
+  const merged = mergePlanIds(savedIds, ids);
+
   const { data: plan, error } = await supabase
     .from("plans")
-    .upsert({ user_id: user.id, spec: {}, updated_at: new Date().toISOString() }, { onConflict: "user_id" })
+    .upsert(
+      { user_id: user.id, spec: spec ?? {}, updated_at: new Date().toISOString() },
+      { onConflict: "user_id" },
+    )
     .select("id")
     .single();
   if (error) throw error;
 
   await supabase.from("plan_products").delete().eq("plan_id", plan.id);
-  if (ids.length) {
-    await supabase.from("plan_products").insert(ids.map((product_id) => ({ plan_id: plan.id, product_id })));
+  if (merged.length) {
+    await supabase.from("plan_products").insert(merged.map((product_id) => ({ plan_id: plan.id, product_id })));
   }
+  await setPlanIds(merged);
   revalidatePath("/plan");
 }
