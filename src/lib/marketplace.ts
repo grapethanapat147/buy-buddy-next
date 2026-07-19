@@ -5,6 +5,10 @@
  * A real affiliate/deep link stored on product_prices.url takes precedence when
  * present (see buyUrlFor).
  */
+/** The marketplaces we track a price for, in display order. */
+export const MARKETPLACES = ["Shopee", "Lazada", "TikTok Shop", "Official Store"] as const;
+export type Marketplace = (typeof MARKETPLACES)[number];
+
 const SEARCH_URL: Record<string, (q: string) => string> = {
   Shopee: (q) => `https://shopee.co.th/search?keyword=${q}`,
   Lazada: (q) => `https://www.lazada.co.th/catalog/?q=${q}`,

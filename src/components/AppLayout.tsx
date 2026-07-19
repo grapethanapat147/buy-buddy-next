@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isAdminEmail } from "@/lib/admin";
 import { getPlanIds } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import SignOutButton from "./SignOutButton";
@@ -11,6 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const isAdmin = isAdminEmail(user?.email, process.env.ADMIN_EMAILS);
 
   return (
     <div className="mx-auto max-w-xl px-4 pb-10 pt-5">
@@ -37,6 +39,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               {count}
             </span>
           </Link>
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="text-ink-soft transition-colors hover:text-ink"
+              title="Admin"
+            >
+              ⚙️
+            </Link>
+          )}
           {user && <SignOutButton />}
         </nav>
       </header>

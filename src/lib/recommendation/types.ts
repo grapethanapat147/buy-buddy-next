@@ -22,6 +22,7 @@ export interface TriggerRule {
 export interface ProductPrice {
     platform: string;
     price: number;
+    url?: string | null;
 }
 
 export interface Product {

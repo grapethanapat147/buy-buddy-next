@@ -10,7 +10,6 @@ import { getBundle, getProductBySlug } from "@/lib/catalog";
 import { buyUrlFor } from "@/lib/marketplace";
 import { cheapestPrice } from "@/lib/recommendation/engine";
 import { getPlanIds } from "@/lib/session";
-import { createClient } from "@/lib/supabase/server";
 
 export default async function ProductDetailPage({
   params,
@@ -26,21 +25,15 @@ export default async function ProductDetailPage({
   const bundle = await getBundle(product.id);
   const planIds = new Set(await getPlanIds());
 
-  const sortedPrices = product.prices.length
+  type PriceRow = { platform: string; price: number; url?: string | null };
+  const sortedPrices: PriceRow[] = product.prices.length
     ? [...product.prices].sort((a, b) => a.price - b.price)
     : [{ platform: "ราคาอ้างอิง", price: product.refPrice }];
   const cheapest = sortedPrices[0];
 
   // Prefer a real stored deep link per platform; otherwise a marketplace search.
-  const supabase = await createClient();
-  const { data: priceRows } = await supabase
-    .from("product_prices")
-    .select("platform, url")
-    .eq("product_id", product.id);
-  const storedUrl = new Map((priceRows ?? []).map((r) => [r.platform, r.url as string | null]));
-  const shopUrl = (platform: string) =>
-    buyUrlFor(platform, product.name, storedUrl.get(platform));
-  const cheapestUrl = shopUrl(cheapest.platform);
+  const shopUrl = (pr: PriceRow) => buyUrlFor(pr.platform, product.name, pr.url);
+  const cheapestUrl = shopUrl(cheapest);
 
   const bundleTotal = bundle.reduce((s, b) => s + cheapestPrice(b), 0);
 
@@ -57,7 +50,7 @@ export default async function ProductDetailPage({
           <span className="text-xs text-ink-muted">แตะร้าน = ไปซื้อ ↗</span>
         </div>
         {sortedPrices.map((pr, i) => {
-          const url = shopUrl(pr.platform);
+          const url = shopUrl(pr);
           const rowClass = `flex items-center justify-between border-t border-ink/8 p-3 ${
             i === 0 ? "bg-emerald-50 text-emerald-700" : "text-ink"
           } ${url ? "transition hover:bg-cream-sunk active:scale-[0.99]" : ""}`;

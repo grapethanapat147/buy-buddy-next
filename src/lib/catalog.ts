@@ -16,12 +16,12 @@ function mapProduct(row: any): Product {
         restockCadence: row.restock_cadence,
         qtyScalesBy: row.qty_scales_by,
         triggers: Array.isArray(row.triggers) ? row.triggers : [],
-        prices: (row.prices ?? []).map((p: any) => ({ platform: p.platform, price: p.price })),
+        prices: (row.prices ?? []).map((p: any) => ({ platform: p.platform, price: p.price, url: p.url ?? null })),
     };
 }
 
 const PRODUCT_SELECT =
-    'id,name,slug,icon,tier,mode,ref_price,restock_cadence,qty_scales_by,triggers, category:categories(name), prices:product_prices(platform,price)';
+    'id,name,slug,icon,tier,mode,ref_price,restock_cadence,qty_scales_by,triggers, category:categories(name), prices:product_prices(platform,price,url)';
 
 export async function getProducts(): Promise<Product[]> {
     const supabase = await createClient();

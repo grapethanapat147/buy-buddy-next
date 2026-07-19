@@ -1,5 +1,6 @@
--- BuyBuddy cloud setup — paste into Supabase SQL Editor and Run.
--- Safe to re-run: every insert skips rows that already exist.
+-- BuyBuddy cloud setup — paste into Supabase SQL Editor and Run (fresh project).
+-- Safe to re-run: inserts skip existing rows. NOTE: for an EXISTING cloud DB,
+-- paste only the NEW migration you need, not this whole file (CREATE TABLE is not re-runnable).
 
 -- ============ 20260710120000_init.sql ============
 -- BuyBuddy schema (ported from the Laravel version)
@@ -243,4 +244,12 @@ insert into public.product_pairings (product_id, paired_product_id) values
   ((select id from public.products where slug='trash-bin'), (select id from public.products where slug='trash-bags')),
   ((select id from public.products where slug='fabric-wardrobe'), (select id from public.products where slug='clothes-rack'))
 on conflict do nothing;
+
+-- ============ 20260719120000_admin_service_role_grants.sql ============
+-- The admin panel writes marketplace prices/links with the service_role key.
+-- service_role bypasses RLS, but Postgres table GRANTs are separate from RLS and
+-- the initial migration only granted SELECT to anon/authenticated — so admin
+-- writes failed with 42501 (permission denied). Grant service_role what it needs.
+-- GRANT is idempotent, so this is safe to re-run.
+grant select, insert, update, delete on public.product_prices to service_role;
 
