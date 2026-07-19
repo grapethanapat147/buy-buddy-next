@@ -72,7 +72,13 @@ export async function signIn(_prev: AuthState, formData: FormData): Promise<Auth
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error || !data.user) {
-    return { error: "อีเมลหรือรหัสผ่านไม่ถูกต้อง" };
+    const notConfirmed =
+      error?.code === "email_not_confirmed" || /confirm/i.test(error?.message ?? "");
+    return {
+      error: notConfirmed
+        ? "อีเมลนี้ยังไม่ได้ยืนยัน — กดลิงก์ยืนยันในอีเมล หรือให้แอดมินปิดการยืนยันอีเมลใน Supabase"
+        : "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+    };
   }
 
   await reconcilePlanWithAccount(supabase, data.user.id);

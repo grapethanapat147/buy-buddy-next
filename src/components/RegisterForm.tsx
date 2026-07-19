@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import PasswordField from "@/components/PasswordField";
 import { signUp, type AuthState } from "@/app/auth-actions";
 
 const field =
@@ -25,10 +26,10 @@ export default function RegisterForm() {
       <input type="email" name="email" required className={field} />
 
       <label className="mt-3 block text-sm text-ink-soft">รหัสผ่าน</label>
-      <input type="password" name="password" required className={field} />
+      <PasswordField name="password" autoComplete="new-password" />
 
       <label className="mt-3 block text-sm text-ink-soft">ยืนยันรหัสผ่าน</label>
-      <input type="password" name="password_confirmation" required className={field} />
+      <PasswordField name="password_confirmation" autoComplete="new-password" />
 
       <button
         type="submit"
