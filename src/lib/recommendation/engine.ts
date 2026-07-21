@@ -164,6 +164,5 @@ export function storeRollup(
                 return sum + (match ? match.price : cheapestPrice(product)) * qty;
             }, 0),
         }))
-        .sort((a, b) => a.total - b.total)
-        .slice(0, 3);
+        .sort((a, b) => a.total - b.total);
 }

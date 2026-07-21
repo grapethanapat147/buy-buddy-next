@@ -5,12 +5,21 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import BudgetMeter from "./BudgetMeter";
 import Mascot from "./Mascot";
+import NoteEditor from "./NoteEditor";
 import RestockCalendar, { type RestockItem } from "./RestockCalendar";
 import { celebrate } from "@/lib/celebrate";
 import { removeFromPlan, savePlanToAccount } from "@/app/actions";
 import { tierLabel, type ProductTier } from "@/lib/recommendation/types";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
+
+/** Each marketplace's brand colour for the "ซื้อทั้งชุดที่ร้านเดียว" cards. */
+const STORE_BRAND: Record<string, { bg: string; label: string }> = {
+  Shopee: { bg: "#EE4D2D", label: "Shopee" },
+  Lazada: { bg: "#0F146D", label: "Lazada" },
+  "TikTok Shop": { bg: "#FE2C55", label: "TikTok Shop" },
+  "Official Store": { bg: "#334155", label: "Official Store" },
+};
 
 export type PlanLine = {
   productId: number;
@@ -20,6 +29,7 @@ export type PlanLine = {
   category: string;
   lineTotal: number;
   suggested: boolean;
+  note: string;
 };
 
 function FilterChip({
@@ -219,21 +229,24 @@ export default function PlanView({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: 24 }}
                   transition={{ duration: 0.22, ease: EASE }}
-                  className={`flex items-center gap-3 border-b border-ink/5 py-3 ${
+                  className={`border-b border-ink/5 py-3 ${
                     it.suggested ? "rounded-xl bg-amber-50 px-3" : ""
                   }`}
                 >
-                  <span className="shrink-0 text-lg" aria-hidden="true">
-                    {it.icon}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-sm text-ink">{it.name}</div>
-                    <div className="text-xs text-ink-muted">{tierLabel[it.tier]}</div>
+                  <div className="flex items-center gap-3">
+                    <span className="shrink-0 text-lg" aria-hidden="true">
+                      {it.icon}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm text-ink">{it.name}</div>
+                      <div className="text-xs text-ink-muted">{tierLabel[it.tier]}</div>
+                    </div>
+                    <span className="text-sm text-ink-soft tabular-nums">
+                      ฿{it.lineTotal.toLocaleString()}
+                    </span>
+                    {it.tier !== "must" && <RemoveButton productId={it.productId} />}
                   </div>
-                  <span className="text-sm text-ink-soft tabular-nums">
-                    ฿{it.lineTotal.toLocaleString()}
-                  </span>
-                  {it.tier !== "must" && <RemoveButton productId={it.productId} />}
+                  <NoteEditor productId={it.productId} note={it.note} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -251,11 +264,32 @@ export default function PlanView({
           )}
 
           {storeRollup.length > 0 && (
-            <div className="mt-4 rounded-xl bg-cream-sunk p-3 text-xs text-ink-soft">
-              ถ้าซื้อทั้งหมดที่:{" "}
-              {storeRollup
-                .map((s) => `${s.platform} ฿${s.total.toLocaleString()}`)
-                .join(" · ")}
+            <div className="mt-5">
+              <p className="mb-2 text-sm font-semibold text-ink">ซื้อทั้งชุดที่ร้านเดียว</p>
+              <div className="grid grid-cols-2 gap-2">
+                {storeRollup.map((s, i) => {
+                  const brand = STORE_BRAND[s.platform] ?? { bg: "#5C3A2E", label: s.platform };
+                  return (
+                    <div
+                      key={s.platform}
+                      className="flex flex-col gap-1 rounded-2xl p-3 text-white shadow-soft"
+                      style={{ backgroundColor: brand.bg }}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-semibold">{brand.label}</span>
+                        {i === 0 && (
+                          <span className="rounded-full bg-white/25 px-1.5 py-0.5 text-[10px] font-bold">
+                            คุ้มสุด
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-lg font-bold tabular-nums">
+                        ฿{s.total.toLocaleString()}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </>

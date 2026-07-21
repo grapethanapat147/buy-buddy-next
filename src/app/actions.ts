@@ -8,6 +8,7 @@ import {
   getRestockSchedule,
   getSpec,
   setPlanIds,
+  setProductNote,
   setRestockSchedule,
   setSpec,
 } from "@/lib/session";
@@ -60,6 +61,12 @@ export async function removeFromPlan(productId: number) {
   const ids = await getPlanIds();
   await setPlanIds(ids.filter((id) => id !== productId));
   revalidatePlanPages();
+}
+
+/** Save (or clear, when empty) a free-text note attached to a plan item. */
+export async function saveProductNote(productId: number, note: string) {
+  await setProductNote(productId, note);
+  revalidatePath("/plan");
 }
 
 /** Assign a restock item to a day of the month (1–31) on the buy calendar. */

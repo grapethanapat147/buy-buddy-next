@@ -4,7 +4,7 @@ import { type RestockItem } from "@/components/RestockCalendar";
 import { getProducts } from "@/lib/catalog";
 import { cheapestPrice, storeRollup, summarizePlan } from "@/lib/recommendation/engine";
 import { tierPriority } from "@/lib/recommendation/types";
-import { getPlanIds, getRestockSchedule, getSpec } from "@/lib/session";
+import { getPlanIds, getProductNotes, getRestockSchedule, getSpec } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
 /** Spread items across the month deterministically when the user hasn't picked a day yet. */
@@ -35,6 +35,7 @@ export default async function PlanPage() {
     budget,
   );
   const suggested = new Set(summary.suggestedDeferrals);
+  const notes = await getProductNotes();
 
   const items: PlanLine[] = withQty
     .map(({ product, lineTotal }) => ({
@@ -45,6 +46,7 @@ export default async function PlanPage() {
       category: product.categoryName,
       lineTotal,
       suggested: suggested.has(product.id),
+      note: notes[String(product.id)] ?? "",
     }))
     .sort((a, b) => tierPriority[a.tier] - tierPriority[b.tier] || a.lineTotal - b.lineTotal);
 

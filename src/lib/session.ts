@@ -4,6 +4,7 @@ import { normalizeSpec, type Spec } from "./recommendation/types";
 const SPEC_COOKIE = "bb_spec";
 const PLAN_COOKIE = "bb_plan";
 const RESTOCK_COOKIE = "bb_restock";
+const NOTES_COOKIE = "bb_notes";
 const COOKIE_OPTS = {
   httpOnly: true,
   sameSite: "lax" as const,
@@ -62,4 +63,31 @@ export async function getRestockSchedule(): Promise<RestockSchedule> {
 export async function setRestockSchedule(schedule: RestockSchedule): Promise<void> {
   const store = await cookies();
   store.set(RESTOCK_COOKIE, JSON.stringify(schedule), COOKIE_OPTS);
+}
+
+/** Free-text notes the user attaches to a plan item, keyed by product id. */
+export type ProductNotes = Record<string, string>;
+
+export async function getProductNotes(): Promise<ProductNotes> {
+  const store = await cookies();
+  const raw = store.get(NOTES_COOKIE)?.value;
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === "object" ? (parsed as ProductNotes) : {};
+  } catch {
+    return {};
+  }
+}
+
+export async function setProductNote(productId: number, note: string): Promise<void> {
+  const store = await cookies();
+  const notes = await getProductNotes();
+  const trimmed = note.trim().slice(0, 500);
+  if (trimmed === "") {
+    delete notes[String(productId)];
+  } else {
+    notes[String(productId)] = trimmed;
+  }
+  store.set(NOTES_COOKIE, JSON.stringify(notes), COOKIE_OPTS);
 }
