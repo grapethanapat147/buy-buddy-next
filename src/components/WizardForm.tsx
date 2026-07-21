@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
+import Link from "next/link";
 import { saveSpecForm } from "@/app/actions";
 import Button from "@/components/ui/Button";
 
@@ -72,8 +73,8 @@ const inputClass =
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" size="large" pill disabled={pending} className="mt-8 w-full">
-      ดูชุดของแนะนำ
+    <Button type="submit" size="large" pill disabled={pending} className="w-full">
+      ดูของแนะนำ →
     </Button>
   );
 }
@@ -196,7 +197,17 @@ export default function WizardForm({
         </div>
       </div>
 
-      <SubmitButton />
+      <div className="mt-8 flex items-center gap-3">
+        <Link
+          href="/"
+          className="flex-1 rounded-full border border-ink/15 p-3.5 text-center text-base font-semibold text-ink-soft transition hover:bg-cream-sunk active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none"
+        >
+          ← ย้อนกลับ
+        </Link>
+        <div className="flex-[2]">
+          <SubmitButton />
+        </div>
+      </div>
     </form>
   );
 }

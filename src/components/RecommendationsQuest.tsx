@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import FlowNav from "./FlowNav";
 import { motion, AnimatePresence } from "motion/react";
 import BudgetMeter from "./BudgetMeter";
 import ReadinessMeter from "./ReadinessMeter";
@@ -181,12 +181,7 @@ export default function RecommendationsQuest({
         )}
       </div>
 
-      <Link
-        href="/plan"
-        className="mt-6 block rounded-full bg-brand p-4 text-center text-lg font-semibold text-white shadow-soft transition hover:bg-brand-500 active:scale-[0.98]"
-      >
-        ไปดูกระเป๋าของฉัน →
-      </Link>
+      <FlowNav backHref="/wizard" backLabel="แก้คำตอบ" nextHref="/plan" nextLabel="ไปกระเป๋า" />
 
       <AnimatePresence>
         {toast && (

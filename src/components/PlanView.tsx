@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import BudgetMeter from "./BudgetMeter";
+import FlowNav from "./FlowNav";
 import Mascot from "./Mascot";
 import NoteEditor from "./NoteEditor";
 import RestockCalendar, { type RestockItem } from "./RestockCalendar";
@@ -309,6 +310,8 @@ export default function PlanView({
           </Link>
         )}
       </div>
+
+      <FlowNav backHref="/recommendations" backLabel="กลับไปจัดห้อง" />
     </>
   );
 }
