@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import BudgetMeter from "./BudgetMeter";
 import FlowNav from "./FlowNav";
+import FlowTopNav from "./FlowTopNav";
 import Mascot from "./Mascot";
 import NoteEditor from "./NoteEditor";
 import RestockCalendar, { type RestockItem } from "./RestockCalendar";
@@ -139,6 +140,7 @@ export default function PlanView({
 
   return (
     <>
+      <FlowTopNav backHref="/recommendations" />
       <div className="flex items-center gap-2">
         <Mascot mood="holding" size={40} />
         <div>

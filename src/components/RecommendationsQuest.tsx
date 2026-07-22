@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import FlowNav from "./FlowNav";
+import FlowTopNav from "./FlowTopNav";
 import { motion, AnimatePresence } from "motion/react";
 import BudgetMeter from "./BudgetMeter";
 import ReadinessMeter from "./ReadinessMeter";
@@ -107,6 +108,7 @@ export default function RecommendationsQuest({
 
   return (
     <>
+      <FlowTopNav backHref="/wizard" nextHref="/plan" />
       <h1 className="text-2xl font-semibold text-ink">จัดห้องกันเลย</h1>
       <p className="mt-1 text-sm text-ink-soft">เก็บของจำเป็นให้ครบ แล้วห้องก็พร้อมอยู่</p>
       <p className="mt-1 text-xs text-ink-muted">ปัดขวาเพื่อเพิ่ม · ปัดซ้ายเพื่อเอาออก 👉</p>

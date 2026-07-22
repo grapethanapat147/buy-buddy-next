@@ -5,6 +5,7 @@ import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { saveSpecForm } from "@/app/actions";
 import Button from "@/components/ui/Button";
+import { ArrowLeft, ArrowRight, arrowBtnClass } from "@/components/FlowTopNav";
 
 type Choice = { key: string; label: string; options: Array<[string, string]> };
 
@@ -108,6 +109,15 @@ export default function WizardForm({
       {ownedIds.map((id) => (
         <input key={id} type="hidden" name="owned" value={id} />
       ))}
+
+      <div className="mb-3 flex items-center justify-between">
+        <Link href="/" aria-label="ย้อนกลับ" className={arrowBtnClass}>
+          <ArrowLeft />
+        </Link>
+        <button type="submit" aria-label="ไปต่อ" className={arrowBtnClass}>
+          <ArrowRight />
+        </button>
+      </div>
 
       <h1 className="text-2xl font-bold text-ink">ตั้งค่าห้องของคุณ</h1>
       <p className="mt-1 text-base text-ink-soft">ตอบสั้น ๆ เพื่อให้เราแนะนำได้ตรงใจ</p>
