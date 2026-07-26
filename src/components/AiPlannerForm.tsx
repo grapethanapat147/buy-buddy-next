@@ -3,6 +3,7 @@
 import { useFormStatus } from "react-dom";
 import { planFromText } from "@/app/plan-actions";
 import Mascot from "./Mascot";
+import PlanningOverlay from "./PlanningOverlay";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -20,6 +21,7 @@ function SubmitButton() {
 export default function AiPlannerForm() {
   return (
     <form action={planFromText} className="rounded-2xl bg-cream-sunk p-4 text-left">
+      <PlanningOverlay />
       <div className="flex items-center gap-2 text-sm font-semibold text-ink">
         <Mascot mood="thinking" size={24} />
         บอกเรามาเลย เดี๋ยวจัดของให้
@@ -29,6 +31,10 @@ export default function AiPlannerForm() {
         rows={2}
         required
         placeholder="เช่น 'งบ 5000 อยู่คนเดียว ทำอาหารบ้าง'"
+        onFocus={(e) => {
+          const el = e.currentTarget;
+          setTimeout(() => el.scrollIntoView({ block: "center", behavior: "smooth" }), 300);
+        }}
         className="mt-2 w-full resize-none rounded-xl border border-ink/10 bg-cream-card p-3 text-base text-ink placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/20 focus:outline-none"
       />
       <SubmitButton />

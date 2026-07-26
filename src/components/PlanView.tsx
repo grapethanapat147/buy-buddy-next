@@ -7,11 +7,11 @@ import BudgetMeter from "./BudgetMeter";
 import FlowNav from "./FlowNav";
 import FlowTopNav from "./FlowTopNav";
 import Mascot from "./Mascot";
-import NoteEditor from "./NoteEditor";
+import PlanItemRow from "./PlanItemRow";
 import RestockCalendar, { type RestockItem } from "./RestockCalendar";
 import { celebrate } from "@/lib/celebrate";
-import { removeFromPlan, savePlanToAccount } from "@/app/actions";
-import { tierLabel, type ProductTier } from "@/lib/recommendation/types";
+import { savePlanToAccount } from "@/app/actions";
+import { type ProductTier } from "@/lib/recommendation/types";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -74,19 +74,6 @@ function Tab({
       }`}
     >
       {children}
-    </button>
-  );
-}
-
-function RemoveButton({ productId }: { productId: number }) {
-  const [pending, startTransition] = useTransition();
-  return (
-    <button
-      onClick={() => startTransition(() => removeFromPlan(productId))}
-      disabled={pending}
-      className="rounded-full border border-ink/15 px-3 py-1 text-xs text-ink-soft transition hover:bg-cream-sunk active:scale-95 disabled:opacity-60"
-    >
-      เลื่อนออก
     </button>
   );
 }
@@ -222,7 +209,8 @@ export default function PlanView({
             </div>
           )}
 
-          <div>
+          <p className="mb-2 text-xs text-ink-muted">ปัดซ้ายที่รายการเพื่อเอาออกจากกระเป๋า 👈</p>
+          <div className="space-y-2">
             <AnimatePresence initial={false}>
               {shown.map((it) => (
                 <motion.div
@@ -230,26 +218,18 @@ export default function PlanView({
                   layout
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: 24 }}
+                  exit={{ opacity: 0, x: -60, transition: { duration: 0.2 } }}
                   transition={{ duration: 0.22, ease: EASE }}
-                  className={`border-b border-ink/5 py-3 ${
-                    it.suggested ? "rounded-xl bg-amber-50 px-3" : ""
-                  }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="shrink-0 text-lg" aria-hidden="true">
-                      {it.icon}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm text-ink">{it.name}</div>
-                      <div className="text-xs text-ink-muted">{tierLabel[it.tier]}</div>
-                    </div>
-                    <span className="text-sm text-ink-soft tabular-nums">
-                      ฿{it.lineTotal.toLocaleString()}
-                    </span>
-                    {it.tier !== "must" && <RemoveButton productId={it.productId} />}
-                  </div>
-                  <NoteEditor productId={it.productId} note={it.note} />
+                  <PlanItemRow
+                    productId={it.productId}
+                    name={it.name}
+                    icon={it.icon}
+                    tier={it.tier}
+                    lineTotal={it.lineTotal}
+                    suggested={it.suggested}
+                    note={it.note}
+                  />
                 </motion.div>
               ))}
             </AnimatePresence>
