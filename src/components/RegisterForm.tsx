@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import Link from "next/link";
+import LineLoginButton from "@/components/LineLoginButton";
 import PasswordField from "@/components/PasswordField";
 import { signUp, type AuthState } from "@/app/auth-actions";
 
@@ -12,14 +13,26 @@ export default function RegisterForm() {
   const [state, formAction, pending] = useActionState<AuthState, FormData>(signUp, null);
 
   return (
-    <form action={formAction}>
+    <div>
       <h1 className="text-2xl font-semibold text-ink">สมัครเพื่อเซฟแผน</h1>
       <p className="mt-1 text-sm text-ink-soft">
-        แผนที่จัดไว้จะถูกเก็บให้อัตโนมัติ ไม่หาย
+        สมัครด้วย LINE ครั้งเดียว แผนที่จัดไว้จะถูกเก็บให้อัตโนมัติ ไม่หาย
       </p>
-      {state?.error && <p className="mt-3 text-sm text-rose-600">{state.error}</p>}
 
-      <label className="mt-4 block text-sm text-ink-soft">ชื่อ</label>
+      <div className="mt-4">
+        <LineLoginButton label="สมัคร / เข้าสู่ระบบด้วย LINE" />
+      </div>
+
+      <div className="my-5 flex items-center gap-3 text-xs text-ink-muted">
+        <span className="h-px flex-1 bg-ink/10" />
+        หรือใช้อีเมล
+        <span className="h-px flex-1 bg-ink/10" />
+      </div>
+
+    <form action={formAction}>
+      {state?.error && <p className="mb-3 text-sm text-rose-600">{state.error}</p>}
+
+      <label className="block text-sm text-ink-soft">ชื่อ</label>
       <input name="name" className={field} />
 
       <label className="mt-3 block text-sm text-ink-soft">อีเมล</label>
@@ -45,5 +58,6 @@ export default function RegisterForm() {
         มีบัญชีแล้ว? เข้าสู่ระบบ
       </Link>
     </form>
+    </div>
   );
 }

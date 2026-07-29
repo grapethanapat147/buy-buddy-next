@@ -17,7 +17,7 @@ export type AuthState = { error: string } | null;
  *   - the cookie is refreshed to that union (+ saved spec) so this session shows
  *     everything the account has.
  */
-async function reconcilePlanWithAccount(supabase: SupabaseClient, userId: string): Promise<void> {
+export async function reconcilePlanWithAccount(supabase: SupabaseClient, userId: string): Promise<void> {
   const guestIds = await getPlanIds();
   const guestSpec = await getSpec();
 
