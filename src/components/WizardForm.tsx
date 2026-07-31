@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { saveSpecForm } from "@/app/actions";
@@ -19,39 +19,70 @@ const fixtures: Array<[string, string, string]> = [
   ["has_aircon", "❄️", "แอร์"],
 ];
 
+type ChoiceOption = { value: string; emoji?: string; label: string; sub?: string };
+
 type Step =
-  | { kind: "number"; key: "budget" | "occupants"; label: string; hint?: string; min: number; prefix?: string; suffix?: string }
-  | { kind: "choice"; key: string; label: string; hint?: string; options: Array<[string, string]> }
+  | { kind: "budget"; key: "budget"; label: string; hint?: string; presets: number[] }
+  | { kind: "stepper"; key: "occupants"; label: string; hint?: string; min: number; max: number; suffix: string }
+  | { kind: "choice"; key: string; label: string; hint?: string; options: ChoiceOption[] }
   | { kind: "have"; key: "have"; label: string; hint?: string };
 
 const STEPS: Step[] = [
-  { kind: "number", key: "budget", label: "งบประมาณเท่าไหร่", hint: "งบรวมคร่าว ๆ ปรับทีหลังได้", min: 0, prefix: "฿" },
-  { kind: "number", key: "occupants", label: "อยู่กี่คน", hint: "มีผลกับของที่ใช้ตามจำนวนคน เช่น ผงซักฟอก", min: 1, suffix: "คน" },
+  {
+    kind: "budget", key: "budget", label: "งบประมาณเท่าไหร่",
+    hint: "แตะปุ่มด่วน หรือพิมพ์เองก็ได้ · ปรับทีหลังได้",
+    presets: [3000, 5000, 8000, 12000],
+  },
+  {
+    kind: "stepper", key: "occupants", label: "อยู่กี่คน",
+    hint: "มีผลกับของที่ใช้ตามจำนวนคน เช่น ผงซักฟอก",
+    min: 1, max: 6, suffix: "คน",
+  },
   {
     kind: "choice", key: "room_size", label: "ห้องขนาดประมาณไหน",
-    options: [["small", "เล็ก\n< 25 ตร.ม."], ["medium", "กลาง\n25–35"], ["large", "ใหญ่\n> 35"]],
+    options: [
+      { value: "small", label: "เล็ก", sub: "< 25 ตร.ม." },
+      { value: "medium", label: "กลาง", sub: "25–35" },
+      { value: "large", label: "ใหญ่", sub: "> 35" },
+    ],
   },
   {
     kind: "choice", key: "cooking", label: "ทำอาหารเองบ่อยแค่ไหน",
-    options: [["never", "ไม่ทำเลย"], ["sometimes", "ทำบ้าง"], ["often", "ทำบ่อย"]],
+    options: [
+      { value: "never", emoji: "🥡", label: "ไม่ทำเลย", sub: "สั่ง/ซื้อกิน" },
+      { value: "sometimes", emoji: "🍜", label: "ทำบ้าง", sub: "อุ่น/ต้มง่าย ๆ" },
+      { value: "often", emoji: "🍳", label: "ทำบ่อย", sub: "ทำเป็นประจำ" },
+    ],
   },
   {
     kind: "choice", key: "laundry", label: "ซักผ้ายังไง",
-    options: [["own_machine", "มีเครื่องซัก"], ["hand", "ซักมือ"], ["service", "ส่งร้าน"]],
+    options: [
+      { value: "own_machine", emoji: "🧺", label: "มีเครื่องซัก" },
+      { value: "hand", emoji: "🫧", label: "ซักมือ" },
+      { value: "service", emoji: "🏪", label: "ส่งร้าน" },
+    ],
   },
   {
     kind: "choice", key: "work_style", label: "ทำงานที่ไหนเป็นหลัก",
-    options: [["office", "ออฟฟิศ"], ["home", "ที่ห้อง"], ["hybrid", "ผสม"]],
+    options: [
+      { value: "office", emoji: "🏢", label: "ออฟฟิศ" },
+      { value: "home", emoji: "🏠", label: "ที่ห้อง" },
+      { value: "hybrid", emoji: "🔀", label: "ผสม" },
+    ],
   },
   {
     kind: "choice", key: "spending_style", label: "สไตล์การซื้อของ",
-    options: [["essentials", "เอาที่จำเป็น"], ["balanced", "พอดี ๆ"], ["comfort", "อยากได้ครบ"]],
+    options: [
+      { value: "essentials", emoji: "🎯", label: "เอาที่จำเป็น" },
+      { value: "balanced", emoji: "⚖️", label: "พอดี ๆ" },
+      { value: "comfort", emoji: "✨", label: "อยากได้ครบ" },
+    ],
   },
   { kind: "have", key: "have", label: "ในห้องมีอะไรอยู่แล้วบ้าง", hint: "เลือกที่มีอยู่แล้ว เดี๋ยวเราไม่แนะนำซ้ำ · จะได้เหลืองบไปซื้ออย่างอื่น 💸" },
 ];
 
-const optionClass = (active: boolean) =>
-  `whitespace-pre-line rounded-2xl border p-4 text-base leading-snug transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+const toggleClass = (active: boolean) =>
+  `flex items-center gap-2 whitespace-pre-line rounded-2xl border p-4 text-left text-base leading-snug transition active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
     active
       ? "border-2 border-brand bg-brand-50 font-semibold text-brand-700"
       : "border-ink/10 text-ink-soft hover:bg-cream-sunk"
@@ -83,14 +114,37 @@ export default function WizardForm({
   const [owned, setOwned] = useState<Record<number, boolean>>({});
   const [budget, setBudget] = useState("5000");
   const [occupants, setOccupants] = useState("1");
+  const advanceTimer = useRef<number | null>(null);
 
   const ownedIds = ownedCandidates.filter((c) => owned[c.id]).map((c) => c.id);
   const total = STEPS.length;
   const cur = STEPS[step];
   const isLast = step === total - 1;
 
+  const clearAdvance = () => {
+    if (advanceTimer.current) {
+      window.clearTimeout(advanceTimer.current);
+      advanceTimer.current = null;
+    }
+  };
   const goNext = () => setStep((s) => Math.min(total - 1, s + 1));
-  const goPrev = () => setStep((s) => Math.max(0, s - 1));
+  const goPrev = () => {
+    clearAdvance();
+    setStep((s) => Math.max(0, s - 1));
+  };
+
+  /** Pick a single-select answer, then glide to the next step so tapping feels like progress. */
+  const selectChoice = (key: string, value: string) => {
+    setChoices((c) => ({ ...c, [key]: value }));
+    clearAdvance();
+    advanceTimer.current = window.setTimeout(() => {
+      advanceTimer.current = null;
+      goNext();
+    }, 260);
+  };
+
+  const stepOccupants = (delta: number) =>
+    setOccupants((n) => String(Math.min(6, Math.max(1, Number(n) + delta))));
 
   return (
     <form action={saveSpecForm}>
@@ -132,47 +186,114 @@ export default function WizardForm({
       </div>
 
       {/* Question */}
-      <div className="mt-6 min-h-[220px]">
+      <div className="mt-6 min-h-[240px]">
         <h1 className="text-2xl font-bold text-ink">{cur.label}</h1>
         {cur.hint && <p className="mt-1.5 text-sm text-ink-soft">{cur.hint}</p>}
 
-        {cur.kind === "number" && (
-          <div className="mt-5 flex items-center gap-2 rounded-2xl border border-ink/10 bg-cream-card p-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/20">
-            {cur.prefix && <span className="pl-2 text-2xl font-bold text-ink-muted">{cur.prefix}</span>}
-            <input
-              type="number"
-              inputMode="numeric"
-              min={cur.min}
-              autoFocus
-              value={cur.key === "budget" ? budget : occupants}
-              onChange={(e) =>
-                cur.key === "budget" ? setBudget(e.target.value) : setOccupants(e.target.value)
-              }
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  goNext();
-                }
-              }}
-              className="w-full bg-transparent p-2 text-3xl font-bold text-ink focus:outline-none"
-            />
-            {cur.suffix && <span className="pr-3 text-lg text-ink-muted">{cur.suffix}</span>}
+        {cur.kind === "budget" && (
+          <div className="mt-5">
+            <div className="grid grid-cols-2 gap-2.5">
+              {cur.presets.map((amt) => {
+                const active = budget === String(amt);
+                return (
+                  <button
+                    key={amt}
+                    type="button"
+                    onClick={() => setBudget(String(amt))}
+                    aria-pressed={active}
+                    className={`rounded-2xl border p-4 text-center text-lg font-semibold tabular-nums transition active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+                      active
+                        ? "border-2 border-brand bg-brand-50 text-brand-700"
+                        : "border-ink/10 text-ink-soft hover:bg-cream-sunk"
+                    }`}
+                  >
+                    ฿{amt.toLocaleString()}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="mt-3 flex items-center gap-2 rounded-2xl border border-ink/10 bg-cream-card p-2 focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/20">
+              <span className="pl-2 text-2xl font-bold text-ink-muted">฿</span>
+              <input
+                type="number"
+                inputMode="numeric"
+                min={0}
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    goNext();
+                  }
+                }}
+                aria-label="งบเอง"
+                className="w-full bg-transparent p-2 text-3xl font-bold text-ink focus:outline-none"
+              />
+            </div>
+          </div>
+        )}
+
+        {cur.kind === "stepper" && (
+          <div className="mt-8 flex items-center justify-center gap-6">
+            <button
+              type="button"
+              aria-label="ลดจำนวนคน"
+              onClick={() => stepOccupants(-1)}
+              disabled={Number(occupants) <= cur.min}
+              className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-ink/15 text-3xl font-bold text-ink-soft transition active:scale-90 disabled:opacity-40"
+            >
+              −
+            </button>
+            <div className="flex min-w-[88px] flex-col items-center">
+              <span className="text-6xl font-bold tabular-nums text-ink">{occupants}</span>
+              <span className="mt-1 text-sm text-ink-muted">{cur.suffix}</span>
+            </div>
+            <button
+              type="button"
+              aria-label="เพิ่มจำนวนคน"
+              onClick={() => stepOccupants(1)}
+              disabled={Number(occupants) >= cur.max}
+              className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-brand bg-brand-50 text-3xl font-bold text-brand transition active:scale-90 disabled:opacity-40"
+            >
+              +
+            </button>
           </div>
         )}
 
         {cur.kind === "choice" && (
-          <div className="mt-5 grid grid-cols-3 gap-2">
-            {cur.options.map(([val, label]) => (
-              <button
-                key={val}
-                type="button"
-                aria-pressed={choices[cur.key] === val}
-                onClick={() => setChoices((c) => ({ ...c, [cur.key]: val }))}
-                className={optionClass(choices[cur.key] === val)}
-              >
-                {label}
-              </button>
-            ))}
+          <div className="mt-5 grid grid-cols-3 gap-2.5">
+            {cur.options.map((opt) => {
+              const active = choices[cur.key] === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => selectChoice(cur.key, opt.value)}
+                  className={`flex min-h-[112px] flex-col items-center justify-center gap-1 rounded-2xl border p-3 text-center transition active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+                    active
+                      ? "border-2 border-brand bg-brand-50 shadow-soft"
+                      : "border-ink/10 hover:bg-cream-sunk"
+                  }`}
+                >
+                  {opt.emoji && (
+                    <span className="text-3xl leading-none" aria-hidden="true">
+                      {opt.emoji}
+                    </span>
+                  )}
+                  <span
+                    className={`font-semibold leading-tight ${opt.emoji ? "text-sm" : "text-lg"} ${
+                      active ? "text-brand-700" : "text-ink"
+                    }`}
+                  >
+                    {opt.label}
+                  </span>
+                  {opt.sub && (
+                    <span className="text-[11px] leading-tight text-ink-muted">{opt.sub}</span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
 
@@ -184,7 +305,7 @@ export default function WizardForm({
                 type="button"
                 aria-pressed={Boolean(has[key])}
                 onClick={() => setHas((h) => ({ ...h, [key]: !h[key] }))}
-                className={optionClass(Boolean(has[key])) + " flex items-center gap-2 text-left"}
+                className={toggleClass(Boolean(has[key]))}
               >
                 <span aria-hidden="true">{emoji}</span>
                 <span className="flex-1">{label}</span>
@@ -199,7 +320,7 @@ export default function WizardForm({
                 type="button"
                 aria-pressed={Boolean(owned[c.id])}
                 onClick={() => setOwned((o) => ({ ...o, [c.id]: !o[c.id] }))}
-                className={optionClass(Boolean(owned[c.id])) + " flex items-center gap-2 text-left"}
+                className={toggleClass(Boolean(owned[c.id]))}
               >
                 <span aria-hidden="true">{c.icon}</span>
                 <span className="flex-1">{c.name}</span>
