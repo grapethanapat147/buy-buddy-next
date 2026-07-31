@@ -54,7 +54,7 @@ export default function SwipeableItemRow({
       <div className="pointer-events-none absolute inset-0 flex items-center justify-between rounded-xl bg-cream-sunk px-4">
         <motion.span
           style={{ opacity: addHint }}
-          className="flex items-center gap-1 text-sm font-semibold text-emerald-600"
+          className="flex items-center gap-1 text-sm font-semibold text-brand-700"
         >
           ＋ เพิ่มลงกระเป๋า
         </motion.span>
@@ -82,7 +82,7 @@ export default function SwipeableItemRow({
         }}
         className={`relative z-10 flex touch-pan-y items-center gap-3 rounded-xl border p-3 shadow-soft transition-colors ${
           optimisticInPlan
-            ? "border-emerald-200 bg-emerald-50"
+            ? "border-brand/40 bg-brand-50"
             : "border-ink/8 bg-cream-card"
         }`}
       >
@@ -102,7 +102,7 @@ export default function SwipeableItemRow({
           aria-label={optimisticInPlan ? "เอาออกจากกระเป๋า" : "เก็บลงกระเป๋า"}
           className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition active:scale-90 focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none ${
             optimisticInPlan
-              ? "bg-emerald-100 text-emerald-600"
+              ? "bg-brand text-white"
               : "border border-ink/15 text-ink-soft hover:bg-cream-sunk"
           }`}
         >

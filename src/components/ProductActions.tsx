@@ -29,7 +29,7 @@ export function AddToPlanButton({
       onClick={toggle}
       className={`mt-4 w-full rounded-full p-4 text-lg font-semibold shadow-soft transition active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none ${
         optimisticInPlan
-          ? "bg-emerald-50 text-emerald-700"
+          ? "bg-brand-50 text-brand-700"
           : "bg-brand text-white hover:bg-brand-500"
       }`}
     >
@@ -66,7 +66,7 @@ export function AddBundleItemButton({
       onClick={toggle}
       className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold transition active:scale-90 focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none ${
         optimisticInPlan
-          ? "bg-emerald-100 text-emerald-700"
+          ? "bg-brand-100 text-brand-700"
           : "bg-brand-50 text-brand-700 hover:bg-brand-100"
       }`}
     >
