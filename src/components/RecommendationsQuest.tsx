@@ -121,15 +121,17 @@ export default function RecommendationsQuest({
       </div>
 
       {categories.length > 1 && (
-        <div className="mt-4 flex flex-wrap gap-2">
-          <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>
-            ทั้งหมด
-          </FilterChip>
-          {categories.map((c) => (
-            <FilterChip key={c.name} active={filter === c.name} onClick={() => setFilter(c.name)}>
-              {c.name}
+        <div className="sticky top-0 z-20 -mx-5 mt-4 border-b border-ink/5 bg-cream-card/95 px-5 py-2.5 backdrop-blur">
+          <div className="flex flex-wrap gap-2">
+            <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>
+              ทั้งหมด
             </FilterChip>
-          ))}
+            {categories.map((c) => (
+              <FilterChip key={c.name} active={filter === c.name} onClick={() => setFilter(c.name)}>
+                {c.name}
+              </FilterChip>
+            ))}
+          </div>
         </div>
       )}
 

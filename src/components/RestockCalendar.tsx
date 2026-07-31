@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import IconTile from "./IconTile";
 import Mascot from "./Mascot";
 import { celebrate } from "@/lib/celebrate";
 import { setRestockDay, toggleRestockDone } from "@/app/actions";
@@ -177,11 +178,9 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
               >
                 <button
                   onClick={() => setSelectedId(selected ? null : it.id)}
-                  className="flex min-w-0 flex-1 items-center gap-2 text-left"
+                  className="flex min-w-0 flex-1 items-center gap-3 text-left"
                 >
-                  <span className={`text-lg ${it.done ? "opacity-40 grayscale" : ""}`} aria-hidden="true">
-                    {it.icon}
-                  </span>
+                  <IconTile icon={it.icon} dimmed={it.done} />
                   <span className="min-w-0 flex-1">
                     <span
                       className={`block truncate text-sm ${
@@ -205,7 +204,7 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
                   onClick={() => toggleDone(it)}
                   disabled={pending}
                   aria-label={it.done ? "ยังไม่ได้ซื้อ" : "ซื้อแล้ว"}
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition active:scale-90 disabled:opacity-60 ${
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition active:scale-90 disabled:opacity-60 ${
                     it.done
                       ? "bg-emerald-100 text-emerald-600"
                       : "border border-ink/15 text-ink-soft hover:bg-cream-sunk"

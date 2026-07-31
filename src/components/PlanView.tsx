@@ -197,15 +197,17 @@ export default function PlanView({
           </AnimatePresence>
 
           {categories.length > 1 && (
-            <div className="mb-3 flex flex-wrap gap-2">
-              <FilterChip active={activeFilter === "all"} onClick={() => setFilter("all")}>
-                ทั้งหมด
-              </FilterChip>
-              {categories.map((c) => (
-                <FilterChip key={c} active={activeFilter === c} onClick={() => setFilter(c)}>
-                  {c}
+            <div className="sticky top-0 z-20 -mx-5 mb-3 border-b border-ink/5 bg-cream-card/95 px-5 py-2.5 backdrop-blur">
+              <div className="flex flex-wrap gap-2">
+                <FilterChip active={activeFilter === "all"} onClick={() => setFilter("all")}>
+                  ทั้งหมด
                 </FilterChip>
-              ))}
+                {categories.map((c) => (
+                  <FilterChip key={c} active={activeFilter === c} onClick={() => setFilter(c)}>
+                    {c}
+                  </FilterChip>
+                ))}
+              </div>
             </div>
           )}
 

@@ -2,6 +2,7 @@
 
 import { useTransition } from "react";
 import { motion, useMotionValue, useTransform } from "motion/react";
+import IconTile from "./IconTile";
 import NoteEditor from "./NoteEditor";
 import { removeFromPlan } from "@/app/actions";
 import { tierLabel, type ProductTier } from "@/lib/recommendation/types";
@@ -60,22 +61,20 @@ export default function PlanItemRow({
         } ${pending ? "opacity-50" : ""}`}
       >
         <div className="flex items-center gap-3">
-          <span className="shrink-0 text-lg" aria-hidden="true">
-            {icon}
-          </span>
+          <IconTile icon={icon} />
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm text-ink">{name}</div>
-            <div className="text-xs text-ink-muted">{tierLabel[tier]}</div>
+            <div className="truncate text-sm font-semibold text-ink">{name}</div>
+            <div className="mt-0.5 text-xs text-ink-muted">
+              <span className="tabular-nums">฿{lineTotal.toLocaleString()}</span> · {tierLabel[tier]}
+            </div>
           </div>
-          <span className="text-sm text-ink-soft tabular-nums">
-            ฿{lineTotal.toLocaleString()}
-          </span>
           <button
             onClick={remove}
             disabled={pending}
-            className="rounded-full border border-ink/15 px-3 py-1 text-xs text-ink-soft transition hover:bg-cream-sunk active:scale-95 disabled:opacity-60"
+            aria-label="เอาออกจากกระเป๋า"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/15 text-ink-soft transition hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500 active:scale-90 disabled:opacity-60"
           >
-            เลื่อนออก
+            <span aria-hidden="true">✕</span>
           </button>
         </div>
         <NoteEditor productId={productId} note={note} />
