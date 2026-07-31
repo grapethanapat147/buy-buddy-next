@@ -1,6 +1,5 @@
 import AppLayout from "@/components/AppLayout";
 import WizardForm, { type OwnedCandidate } from "@/components/WizardForm";
-import AiPlannerForm from "@/components/AiPlannerForm";
 import { getProducts } from "@/lib/catalog";
 
 /**
@@ -33,9 +32,6 @@ export default async function WizardPage() {
   return (
     <AppLayout>
       <WizardForm ownedCandidates={ownedCandidates} />
-      <div className="mt-8 border-t border-ink/10 pt-6">
-        <AiPlannerForm />
-      </div>
     </AppLayout>
   );
 }

@@ -158,7 +158,7 @@ export default function PlanView({
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="mb-3 flex gap-2 rounded-xl bg-cream-sunk p-3 text-sm text-ink-soft"
+                className="mb-3 flex gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"
               >
                 <span aria-hidden="true">🤝</span>
                 <span>
@@ -173,7 +173,7 @@ export default function PlanView({
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="mb-3 flex gap-2 rounded-xl bg-amber-50 p-3 text-sm text-amber-800"
+                className="mb-3 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800"
               >
                 <span aria-hidden="true">💡</span>
                 <span>

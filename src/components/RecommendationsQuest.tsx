@@ -111,7 +111,6 @@ export default function RecommendationsQuest({
       <FlowTopNav backHref="/wizard" nextHref="/plan" />
       <h1 className="text-2xl font-semibold text-ink">จัดห้องกันเลย</h1>
       <p className="mt-1 text-sm text-ink-soft">เก็บของจำเป็นให้ครบ แล้วห้องก็พร้อมอยู่</p>
-      <p className="mt-1 text-xs text-ink-muted">ปัดขวาเพื่อเพิ่ม · ปัดซ้ายเพื่อเอาออก 👉</p>
 
       <div className="mt-3 space-y-2">
         <ReadinessMeter percent={readinessPercent} />
@@ -146,7 +145,7 @@ export default function RecommendationsQuest({
                     ✓ ครบ!
                   </span>
                 ) : (
-                  <span className="rounded-full bg-cream-sunk px-2.5 py-0.5 text-xs font-semibold text-ink-soft tabular-nums">
+                  <span className="text-xs font-medium text-ink-muted tabular-nums">
                     {cat.collected}/{cat.total}
                   </span>
                 )}

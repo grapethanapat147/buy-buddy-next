@@ -8,7 +8,7 @@ import Mascot from "./Mascot";
  * rendered INSIDE the <form> whose submission it should track (useFormStatus).
  */
 export default function PlanningOverlay({
-  label = "กำลังจัดของให้คุณ…",
+  label = "กำลังจัดของให้คุณ",
 }: {
   label?: string;
 }) {
@@ -24,17 +24,17 @@ export default function PlanningOverlay({
       className="fixed inset-0 z-[60] flex flex-col items-center justify-center gap-4 bg-cream/95 px-6 text-center backdrop-blur-sm"
     >
       <div className="motion-safe:animate-bounce">
-        <Mascot mood="search" size={120} />
+        <Mascot mood="search" size={168} />
       </div>
-      <p className="text-xl font-bold text-ink">{label}</p>
-      <p className="max-w-xs text-sm text-ink-soft">
-        เดี๋ยวแนะนำของที่คุ้มสุด ไม่เกินงบให้เลย
+      <p className="text-2xl font-bold text-ink">
+        {label}
+        <span aria-hidden="true" className="text-brand">
+          <span className="inline-block motion-safe:animate-bounce" style={{ animationDelay: "0ms" }}>.</span>
+          <span className="inline-block motion-safe:animate-bounce" style={{ animationDelay: "150ms" }}>.</span>
+          <span className="inline-block motion-safe:animate-bounce" style={{ animationDelay: "300ms" }}>.</span>
+        </span>
       </p>
-      <div className="mt-1 flex gap-1.5" aria-hidden="true">
-        <span className="h-2.5 w-2.5 rounded-full bg-brand motion-safe:animate-bounce" style={{ animationDelay: "0ms" }} />
-        <span className="h-2.5 w-2.5 rounded-full bg-brand motion-safe:animate-bounce" style={{ animationDelay: "150ms" }} />
-        <span className="h-2.5 w-2.5 rounded-full bg-brand motion-safe:animate-bounce" style={{ animationDelay: "300ms" }} />
-      </div>
+      <p className="max-w-xs text-sm text-ink-soft">เดี๋ยวแนะนำของที่คุ้มสุด ไม่เกินงบให้เลย</p>
     </div>
   );
 }

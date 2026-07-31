@@ -21,7 +21,7 @@ export default function FlowNav({
       {backHref && (
         <Link
           href={backHref}
-          className="flex-1 rounded-full border border-ink/15 p-3.5 text-center text-base font-semibold text-ink-soft transition hover:bg-cream-sunk active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none"
+          className="flex-1 whitespace-nowrap rounded-full border border-ink/15 px-3 py-3.5 text-center text-sm font-semibold text-ink-soft transition hover:bg-cream-sunk active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none"
         >
           ← {backLabel}
         </Link>

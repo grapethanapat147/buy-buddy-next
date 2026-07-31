@@ -25,6 +25,9 @@ export default function ReadinessMeter({ percent }: { percent: number }) {
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         />
       </div>
+      <p className="mt-2 text-xs text-ink-soft">
+        เก็บ “ของจำเป็น” ให้ครบ แถบก็จะเต็ม — ห้องพร้อมเข้าอยู่
+      </p>
     </div>
   );
 }
