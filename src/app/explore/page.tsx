@@ -1,5 +1,6 @@
 import AppLayout from "@/components/AppLayout";
 import ExploreControls from "@/components/ExploreControls";
+import ScrollToTop from "@/components/ScrollToTop";
 import SwipeableItemRow from "@/components/SwipeableItemRow";
 import { getProducts } from "@/lib/catalog";
 import { cheapestPrice } from "@/lib/recommendation/engine";
@@ -57,6 +58,7 @@ export default async function ExplorePage({
           <p className="py-6 text-center text-sm text-ink-muted">ไม่พบสินค้า</p>
         )}
       </div>
+      <ScrollToTop />
     </AppLayout>
   );
 }

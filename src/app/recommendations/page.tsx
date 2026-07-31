@@ -4,6 +4,7 @@ import RecommendationsQuest, {
   type QuestCategory,
   type QuestItem,
 } from "@/components/RecommendationsQuest";
+import ScrollToTop from "@/components/ScrollToTop";
 import { getProducts } from "@/lib/catalog";
 import { recommend } from "@/lib/recommendation/engine";
 import { getPlanIds, getSpec } from "@/lib/session";
@@ -67,6 +68,7 @@ export default async function RecommendationsPage() {
         plannedTotal={plannedTotal}
         readinessPercent={readinessPercent}
       />
+      <ScrollToTop />
     </AppLayout>
   );
 }

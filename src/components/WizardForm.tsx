@@ -6,6 +6,7 @@ import Link from "next/link";
 import { saveSpecForm } from "@/app/actions";
 import Button from "@/components/ui/Button";
 import PlanningOverlay from "@/components/PlanningOverlay";
+import { ArrowLeft, arrowBtnClass } from "@/components/FlowTopNav";
 
 /** A catalog item the wizard asks about under "ในห้องมีอะไรอยู่แล้วบ้าง". */
 export type OwnedCandidate = { id: number; icon: string; name: string };
@@ -55,9 +56,6 @@ const optionClass = (active: boolean) =>
       ? "border-2 border-brand bg-brand-50 font-semibold text-brand-700"
       : "border-ink/10 text-ink-soft hover:bg-cream-sunk"
   }`;
-
-const backClass =
-  "flex-1 rounded-full border border-ink/15 p-3.5 text-center text-base font-semibold text-ink-soft transition hover:bg-cream-sunk active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -111,20 +109,30 @@ export default function WizardForm({
         <input key={id} type="hidden" name="owned" value={id} />
       ))}
 
-      {/* Progress */}
-      <div className="mb-1 flex items-center justify-between text-xs font-medium text-ink-muted">
-        <span>ตั้งค่าห้องของคุณ</span>
-        <span className="tabular-nums">ข้อ {step + 1} จาก {total}</span>
-      </div>
-      <div className="h-2 overflow-hidden rounded-full bg-cream-sunk">
-        <div
-          className="h-full rounded-full bg-brand transition-[width] duration-300"
-          style={{ width: `${((step + 1) / total) * 100}%` }}
-        />
+      {/* Back arrow + progress bar + counter, all on one line (mobile pattern). */}
+      <div className="flex items-center gap-3">
+        {step === 0 ? (
+          <Link href="/" aria-label="ออก" className={arrowBtnClass}>
+            <ArrowLeft />
+          </Link>
+        ) : (
+          <button type="button" onClick={goPrev} aria-label="ย้อนกลับ" className={arrowBtnClass}>
+            <ArrowLeft />
+          </button>
+        )}
+        <div className="h-2 flex-1 overflow-hidden rounded-full bg-cream-sunk">
+          <div
+            className="h-full rounded-full bg-brand transition-[width] duration-300"
+            style={{ width: `${((step + 1) / total) * 100}%` }}
+          />
+        </div>
+        <span className="shrink-0 text-xs font-medium text-ink-muted tabular-nums">
+          {step + 1}/{total}
+        </span>
       </div>
 
       {/* Question */}
-      <div className="mt-7 min-h-[220px]">
+      <div className="mt-6 min-h-[220px]">
         <h1 className="text-2xl font-bold text-ink">{cur.label}</h1>
         {cur.hint && <p className="mt-1.5 text-sm text-ink-soft">{cur.hint}</p>}
 
@@ -204,26 +212,15 @@ export default function WizardForm({
         )}
       </div>
 
-      {/* Navigation */}
-      <div className="mt-8 flex items-center gap-3">
-        {step === 0 ? (
-          <Link href="/" className={backClass}>
-            ← ออก
-          </Link>
+      {/* Sticky footer — the forward action stays pinned with a gradient fade above it. */}
+      <div className="sticky bottom-0 -mx-5 mt-6 bg-gradient-to-t from-cream-card via-cream-card to-transparent px-5 pb-1 pt-8">
+        {isLast ? (
+          <SubmitButton />
         ) : (
-          <button type="button" onClick={goPrev} className={backClass}>
-            ← ย้อนกลับ
-          </button>
+          <Button type="button" size="large" pill onClick={goNext} className="w-full">
+            ไปต่อ →
+          </Button>
         )}
-        <div className="flex-[2]">
-          {isLast ? (
-            <SubmitButton />
-          ) : (
-            <Button type="button" size="large" pill onClick={goNext} className="w-full">
-              ไปต่อ →
-            </Button>
-          )}
-        </div>
       </div>
     </form>
   );

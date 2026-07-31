@@ -3,7 +3,7 @@ import RegisterForm from "@/components/RegisterForm";
 
 export default function RegisterPage() {
   return (
-    <AppLayout>
+    <AppLayout minimal>
       <RegisterForm />
     </AppLayout>
   );
