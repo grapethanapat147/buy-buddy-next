@@ -119,23 +119,27 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
               key={day}
               onClick={() => assignDay(day)}
               disabled={!clickable}
-              className={`flex min-h-[46px] flex-col items-center rounded-lg border p-1 text-center transition ${
-                isToday ? "border-brand/50 bg-brand-50" : "border-ink/5 bg-cream-card"
+              className={`flex min-h-[54px] flex-col items-center gap-0.5 rounded-xl p-1 pt-1.5 text-center transition ${
+                isToday
+                  ? "bg-brand-50 ring-1 ring-inset ring-brand/40"
+                  : dayItems.length > 0
+                    ? "bg-cream-sunk"
+                    : ""
               } ${
                 clickable
-                  ? "cursor-pointer hover:-translate-y-0.5 hover:border-brand hover:shadow-soft"
+                  ? "cursor-pointer hover:-translate-y-0.5 hover:ring-1 hover:ring-inset hover:ring-brand"
                   : "cursor-default"
               }`}
             >
               <span
-                className={`text-[11px] tabular-nums ${
-                  isToday ? "font-bold text-brand-700" : "text-ink-soft"
+                className={`flex h-5 w-5 items-center justify-center rounded-full text-[11px] tabular-nums ${
+                  isToday ? "bg-brand font-bold text-white" : "text-ink-soft"
                 }`}
               >
                 {day}
               </span>
-              <span className="mt-0.5 flex flex-wrap justify-center gap-0.5 leading-none">
-                {dayItems.slice(0, 3).map((it) => (
+              <span className="flex flex-wrap justify-center gap-0.5 leading-none">
+                {dayItems.slice(0, 2).map((it) => (
                   <span
                     key={it.id}
                     className={`text-sm ${it.done ? "opacity-30 grayscale" : ""}`}
@@ -144,8 +148,10 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
                     {it.icon}
                   </span>
                 ))}
-                {dayItems.length > 3 && (
-                  <span className="text-[9px] text-ink-muted">+{dayItems.length - 3}</span>
+                {dayItems.length > 2 && (
+                  <span className="rounded-full bg-ink/10 px-1 text-[9px] font-semibold leading-tight text-ink-soft">
+                    +{dayItems.length - 2}
+                  </span>
                 )}
               </span>
             </button>
@@ -211,7 +217,17 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
                   }`}
                 >
                   <span className="animate-pop" key={String(it.done)} aria-hidden="true">
-                    {it.done ? "✓" : "🛒"}
+                    {it.done ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    ) : (
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                      </svg>
+                    )}
                   </span>
                 </button>
               </motion.div>
