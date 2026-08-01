@@ -1,12 +1,14 @@
 import { redirect } from "next/navigation";
 import AppLayout from "@/components/AppLayout";
 import RecommendationsQuest, {
+  type OtherCategory,
+  type OtherItem,
   type QuestCategory,
   type QuestItem,
 } from "@/components/RecommendationsQuest";
 import ScrollToTop from "@/components/ScrollToTop";
 import { getProducts } from "@/lib/catalog";
-import { recommend } from "@/lib/recommendation/engine";
+import { cheapestPrice, recommend } from "@/lib/recommendation/engine";
 import { getPlanIds, getSpec } from "@/lib/session";
 
 export default async function RecommendationsPage() {
@@ -60,10 +62,39 @@ export default async function RecommendationsPage() {
     .filter((i) => i.inPlan)
     .reduce((sum, i) => sum + i.lineTotal, 0);
 
+  // Everything the engine didn't surface, so the user can still browse the full
+  // catalog without leaving the quest — recommended first, then all the rest.
+  const recIds = new Set(recs.map((r) => r.productId));
+  const otherOrder: string[] = [];
+  const otherGrouped = new Map<string, OtherItem[]>();
+  for (const p of products) {
+    if (recIds.has(p.id)) {
+      continue;
+    }
+    const cat = p.categoryName || "อื่น ๆ";
+    if (!otherGrouped.has(cat)) {
+      otherGrouped.set(cat, []);
+      otherOrder.push(cat);
+    }
+    otherGrouped.get(cat)!.push({
+      productId: p.id,
+      name: p.name,
+      slug: p.slug,
+      icon: p.icon,
+      price: cheapestPrice(p),
+      inPlan: planIds.has(p.id),
+    });
+  }
+  const otherCategories: OtherCategory[] = otherOrder.map((name) => ({
+    name,
+    items: otherGrouped.get(name)!,
+  }));
+
   return (
     <AppLayout>
       <RecommendationsQuest
         categories={categories}
+        otherCategories={otherCategories}
         budget={spec.budget}
         plannedTotal={plannedTotal}
         readinessPercent={readinessPercent}

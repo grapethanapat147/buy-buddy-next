@@ -34,6 +34,20 @@ export type QuestCategory = {
   items: QuestItem[];
 };
 
+export type OtherItem = {
+  productId: number;
+  name: string;
+  slug: string;
+  icon: string;
+  price: number;
+  inPlan: boolean;
+};
+
+export type OtherCategory = {
+  name: string;
+  items: OtherItem[];
+};
+
 function FilterChip({
   active,
   onClick,
@@ -59,11 +73,13 @@ function FilterChip({
 
 export default function RecommendationsQuest({
   categories,
+  otherCategories = [],
   budget,
   plannedTotal,
   readinessPercent,
 }: {
   categories: QuestCategory[];
+  otherCategories?: OtherCategory[];
   budget: number;
   plannedTotal: number;
   readinessPercent: number;
@@ -72,6 +88,16 @@ export default function RecommendationsQuest({
   const [filter, setFilter] = useState<string>("all");
   const shownCategories =
     filter === "all" ? categories : categories.filter((c) => c.name === filter);
+  const shownOthers =
+    filter === "all" ? otherCategories : otherCategories.filter((c) => c.name === filter);
+
+  // Chips span both sections so a tap filters the whole page, recommended + rest.
+  const chipNames: string[] = [];
+  for (const c of [...categories, ...otherCategories]) {
+    if (!chipNames.includes(c.name)) {
+      chipNames.push(c.name);
+    }
+  }
   const prev = useRef<{ done: Record<string, boolean>; percent: number } | null>(null);
 
   useEffect(() => {
@@ -120,69 +146,108 @@ export default function RecommendationsQuest({
         </div>
       </div>
 
-      {categories.length > 1 && (
+      {chipNames.length > 1 && (
         <div className="sticky top-0 z-20 -mx-5 mt-4 border-b border-ink/5 bg-cream-card/95 px-5 py-2.5 backdrop-blur">
           <div className="flex flex-wrap gap-2">
             <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>
               ทั้งหมด
             </FilterChip>
-            {categories.map((c) => (
-              <FilterChip key={c.name} active={filter === c.name} onClick={() => setFilter(c.name)}>
-                {c.name}
+            {chipNames.map((name) => (
+              <FilterChip key={name} active={filter === name} onClick={() => setFilter(name)}>
+                {name}
               </FilterChip>
             ))}
           </div>
         </div>
       )}
 
-      <div className="mt-4 space-y-5">
-        {shownCategories.map((cat) => {
-          const done = cat.collected === cat.total && cat.total > 0;
-          return (
-            <section key={cat.name}>
-              <div className="mb-2 flex items-center justify-between">
-                <h2 className="text-base font-semibold text-ink">{cat.name}</h2>
-                {done ? (
-                  <span className="animate-pop rounded-full bg-brand px-2.5 py-0.5 text-xs font-semibold text-white">
-                    ✓ ครบ!
-                  </span>
-                ) : (
-                  <span className="text-xs font-medium text-ink-muted tabular-nums">
-                    {cat.collected}/{cat.total}
-                  </span>
-                )}
-              </div>
-              <div className="space-y-2">
-                {cat.items.map((it) => (
-                  <SwipeableItemRow
-                    key={it.productId}
-                    productId={it.productId}
-                    inPlan={it.inPlan}
-                    icon={it.icon}
-                    title={it.name}
-                    href={`/products/${it.slug}`}
-                    subtitle={
-                      <span className="flex items-center gap-2">
-                        <span className="tabular-nums">฿{it.lineTotal.toLocaleString()}</span>
-                        <span
-                          className={`inline-block rounded-full px-2 py-0.5 text-[11px] ${tierBadge[it.tier]}`}
-                        >
-                          {tierLabel[it.tier]}
-                        </span>
+      {/* Recommended for you — the curated quest, always shown first. */}
+      {shownCategories.length > 0 && (
+        <div className="mt-4">
+          <h2 className="flex items-center gap-1.5 text-sm font-bold text-brand-700">
+            <span aria-hidden="true">⭐</span> ของแนะนำสำหรับคุณ
+          </h2>
+          <div className="mt-3 space-y-5">
+            {shownCategories.map((cat) => {
+              const done = cat.collected === cat.total && cat.total > 0;
+              return (
+                <section key={cat.name}>
+                  <div className="mb-2 flex items-center justify-between">
+                    <h3 className="text-base font-semibold text-ink">{cat.name}</h3>
+                    {done ? (
+                      <span className="animate-pop rounded-full bg-brand px-2.5 py-0.5 text-xs font-semibold text-white">
+                        ✓ ครบ!
                       </span>
-                    }
-                  />
-                ))}
-              </div>
-            </section>
-          );
-        })}
-        {categories.length === 0 && (
-          <p className="py-8 text-center text-sm text-ink-muted">
-            ยังไม่มีของ เริ่มเก็บกันเลย!
-          </p>
-        )}
-      </div>
+                    ) : (
+                      <span className="text-xs font-medium text-ink-muted tabular-nums">
+                        {cat.collected}/{cat.total}
+                      </span>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    {cat.items.map((it) => (
+                      <SwipeableItemRow
+                        key={it.productId}
+                        productId={it.productId}
+                        inPlan={it.inPlan}
+                        icon={it.icon}
+                        title={it.name}
+                        href={`/products/${it.slug}`}
+                        subtitle={
+                          <span className="flex items-center gap-2">
+                            <span className="tabular-nums">฿{it.lineTotal.toLocaleString()}</span>
+                            <span
+                              className={`inline-block rounded-full px-2 py-0.5 text-[11px] ${tierBadge[it.tier]}`}
+                            >
+                              {tierLabel[it.tier]}
+                            </span>
+                          </span>
+                        }
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {categories.length === 0 && (
+        <p className="mt-4 py-8 text-center text-sm text-ink-muted">
+          ยังไม่มีของแนะนำ — ลองเลือกจากของทั้งหมดด้านล่างได้เลย
+        </p>
+      )}
+
+      {/* Everything else — browse the full catalog without leaving the page. */}
+      {shownOthers.length > 0 && (
+        <div className="mt-8">
+          <h2 className="flex items-center gap-1.5 text-sm font-bold text-ink">
+            <span aria-hidden="true">🧺</span> ของอื่น ๆ ที่เพิ่มได้เอง
+          </h2>
+          <p className="mt-0.5 text-xs text-ink-soft">อยากได้อย่างอื่นเพิ่ม เลือกได้เลย</p>
+          <div className="mt-3 space-y-5">
+            {shownOthers.map((cat) => (
+              <section key={cat.name}>
+                <h3 className="mb-2 text-base font-semibold text-ink">{cat.name}</h3>
+                <div className="space-y-2">
+                  {cat.items.map((it) => (
+                    <SwipeableItemRow
+                      key={it.productId}
+                      productId={it.productId}
+                      inPlan={it.inPlan}
+                      icon={it.icon}
+                      title={it.name}
+                      href={`/products/${it.slug}`}
+                      subtitle={<span className="tabular-nums">฿{it.price.toLocaleString()}</span>}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
+      )}
 
       <FlowNav backHref="/wizard" backLabel="แก้คำตอบ" nextHref="/plan" nextLabel="ไปกระเป๋า" />
 
