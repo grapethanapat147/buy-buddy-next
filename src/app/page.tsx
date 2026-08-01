@@ -1,7 +1,6 @@
 import Link from "next/link";
 import AppLayout from "@/components/AppLayout";
 import Mascot from "@/components/Mascot";
-import AiPlannerForm from "@/components/AiPlannerForm";
 import Card from "@/components/ui/Card";
 
 const perks: Array<[string, string]> = [
@@ -41,9 +40,19 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="mt-6">
-          <AiPlannerForm />
-        </div>
+        <Link
+          href="/assistant"
+          className="mt-6 flex items-center gap-3 rounded-2xl bg-cream-sunk p-4 text-left transition hover:brightness-[0.98] active:scale-[0.99]"
+        >
+          <Mascot mood="thinking" size={40} />
+          <div className="flex-1">
+            <div className="text-sm font-semibold text-ink">คุยกับ BuyBuddy 💬</div>
+            <div className="text-xs text-ink-muted">เล่าเรื่องห้องแบบสบาย ๆ เดี๋ยวจัดของให้</div>
+          </div>
+          <span aria-hidden="true" className="text-ink-muted">
+            →
+          </span>
+        </Link>
 
         <div className="mt-10 grid grid-cols-3 gap-3">
           {perks.map(([emoji, label]) => (
