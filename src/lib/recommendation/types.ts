@@ -30,6 +30,7 @@ export interface Product {
     name: string;
     slug: string;
     icon: string;
+    imageUrl: string | null;
     categoryName: string;
     tier: ProductTier;
     mode: ProductMode;

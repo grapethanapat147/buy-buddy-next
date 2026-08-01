@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import AppLayout from "@/components/AppLayout";
-import IconTile from "@/components/IconTile";
+import ProductImage from "@/components/ProductImage";
 import {
   AddToPlanButton,
   AddBundleButton,
@@ -40,7 +40,7 @@ export default async function ProductDetailPage({
   return (
     <AppLayout>
       <div className="flex items-center gap-3">
-        <IconTile icon={product.icon} size="lg" />
+        <ProductImage imageUrl={product.imageUrl} icon={product.icon} name={product.name} size="lg" />
         <h1 className="text-2xl font-semibold text-ink">{product.name}</h1>
       </div>
 

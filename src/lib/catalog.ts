@@ -9,6 +9,7 @@ function mapProduct(row: any): Product {
         name: row.name,
         slug: row.slug,
         icon: row.icon,
+        imageUrl: row.image_url ?? null,
         categoryName: row.category?.name ?? '',
         tier: row.tier,
         mode: row.mode,
@@ -21,7 +22,7 @@ function mapProduct(row: any): Product {
 }
 
 const PRODUCT_SELECT =
-    'id,name,slug,icon,tier,mode,ref_price,restock_cadence,qty_scales_by,triggers, category:categories(name), prices:product_prices(platform,price,url)';
+    'id,name,slug,icon,image_url,tier,mode,ref_price,restock_cadence,qty_scales_by,triggers, category:categories(name), prices:product_prices(platform,price,url)';
 
 export async function getProducts(): Promise<Product[]> {
     const supabase = await createClient();

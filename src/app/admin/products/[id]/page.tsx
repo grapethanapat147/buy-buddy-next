@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AppLayout from "@/components/AppLayout";
+import ProductImage from "@/components/ProductImage";
 import Button from "@/components/ui/Button";
 import { getProducts } from "@/lib/catalog";
 import { MARKETPLACES } from "@/lib/marketplace";
@@ -43,9 +44,7 @@ export default async function AdminProductPage({
       </Link>
 
       <div className="mt-2 flex items-center gap-3">
-        <span className="text-3xl" aria-hidden="true">
-          {product.icon}
-        </span>
+        <ProductImage imageUrl={product.imageUrl} icon={product.icon} name={product.name} />
         <div>
           <h1 className="text-xl font-semibold text-ink">{product.name}</h1>
           <p className="text-xs text-ink-soft">
@@ -58,7 +57,24 @@ export default async function AdminProductPage({
         <input type="hidden" name="product_id" value={product.id} />
         <input type="hidden" name="slug" value={product.slug} />
 
-        <p className="text-sm text-ink-soft">
+        <div className="rounded-xl border border-ink/8 bg-cream-card p-3 shadow-soft">
+          <label htmlFor="image_url" className="text-sm font-semibold text-ink">
+            รูปสินค้า
+          </label>
+          <p className="mt-0.5 text-xs text-ink-muted">
+            วางลิงก์รูป (URL) · เว้นว่าง = ใช้ emoji {product.icon} แทน
+          </p>
+          <input
+            id="image_url"
+            type="url"
+            name="image_url"
+            placeholder="https://…/photo.jpg"
+            defaultValue={product.imageUrl ?? ""}
+            className={inputClass + " mt-2"}
+          />
+        </div>
+
+        <p className="mt-4 text-sm text-ink-soft">
           กรอกราคาจริง (บาท) + ลิงก์หน้าสินค้าของแต่ละร้าน · เว้นราคาว่างไว้ = ไม่มีขายที่ร้านนั้น
         </p>
 
@@ -92,7 +108,7 @@ export default async function AdminProductPage({
         </div>
 
         <Button type="submit" size="large" pill className="mt-6 w-full">
-          บันทึกราคา & ลิงก์
+          บันทึกรูป ราคา & ลิงก์
         </Button>
       </form>
     </AppLayout>

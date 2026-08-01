@@ -29,6 +29,15 @@ export async function saveProductPrices(formData: FormData): Promise<void> {
 
   const supabase = createAdminClient();
 
+  const imageUrl = String(formData.get("image_url") ?? "").trim();
+  const { error: imgError } = await supabase
+    .from("products")
+    .update({ image_url: imageUrl || null })
+    .eq("id", productId);
+  if (imgError) {
+    throw imgError;
+  }
+
   const { error: delError } = await supabase
     .from("product_prices")
     .delete()
