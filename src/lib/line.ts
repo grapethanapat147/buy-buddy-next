@@ -19,7 +19,10 @@ export function buildAuthorizeUrl(state: string, redirectUri: string): string {
     client_id: process.env.LINE_CHANNEL_ID!,
     redirect_uri: redirectUri,
     state,
-    scope: "openid profile email",
+    // Only openid + profile: we mint a synthetic line_<sub>@line.local email, so
+    // we never need LINE's real email. Requesting the "email" scope also fails for
+    // LINE accounts that have no email on file — dropping it avoids that error.
+    scope: "openid profile",
   });
   return `${AUTHORIZE}?${params.toString()}`;
 }
