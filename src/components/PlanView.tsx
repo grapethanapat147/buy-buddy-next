@@ -173,9 +173,8 @@ export default function PlanView({
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="mb-3 flex gap-2 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"
+                className="mb-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"
               >
-                <span aria-hidden="true">🤝</span>
                 <span>
                   ของจำเป็นล้วน ๆ ก็เกินงบ ฿{overBudgetBy.toLocaleString()} —
                   เราไม่ตัดของจำเป็นให้ ลองเปลี่ยนรุ่นถูกกว่า หรือแบ่งซื้อข้ามเดือน
@@ -188,9 +187,8 @@ export default function PlanView({
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="mb-3 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800"
+                className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800"
               >
-                <span aria-hidden="true">💡</span>
                 <span>
                   เกินงบ ฿{overBudgetBy.toLocaleString()} —
                   ลองเลื่อนของที่ไฮไลต์ไว้ไปซื้อรอบหน้า
