@@ -87,8 +87,10 @@
     --color-info-soft: #edf4fc;
 
     /* ---- Typography ---- */
-    --font-sans: "LINE Seed Sans", "Sukhumvit Set", var(--font-jakarta), ui-sans-serif,
-        system-ui, sans-serif;
+    /* Bundled Thai+Latin faces (next/font): --font-plex (body, consistent on every
+       device) and --font-mitr (warm geometric display for headings + wordmark). */
+    --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+    --font-display: var(--font-mitr), var(--font-plex), ui-sans-serif, system-ui, sans-serif;
 
     /* ---- Radius (utility-name + official aliases) ---- */
     --radius-xl: 16px;

@@ -46,7 +46,7 @@ export default async function ExplorePage({
       <ExploreControls categories={categories} activeCategory={category} query={q} />
 
       <p className="mt-2 text-xs text-ink-muted">
-        เคล็ดลับ: ปัดขวาเพื่อเพิ่ม · ปัดซ้ายเพื่อเอาออก 👉
+        เคล็ดลับ: ปัดขวาเพื่อเพิ่ม · ปัดซ้ายเพื่อเอาออก
       </p>
 
       <div className="mt-3 space-y-2">

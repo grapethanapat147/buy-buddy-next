@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Mitr, IBM_Plex_Sans_Thai } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const jakarta = Plus_Jakarta_Sans({
-  variable: "--font-jakarta",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+/** Display face for headings + the wordmark — warm geometric, Thai + Latin. */
+const display = Mitr({
+  variable: "--font-mitr",
+  subsets: ["latin", "thai"],
+  weight: ["500", "600", "700"],
+});
+
+/** Body face — clean, highly readable Thai + Latin, bundled so it renders the
+ *  same on every device (no more falling back to an uncontrolled system font). */
+const body = IBM_Plex_Sans_Thai({
+  variable: "--font-plex",
+  subsets: ["latin", "thai"],
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -20,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="th" className={`${jakarta.variable} h-full`}>
+    <html lang="th" className={`${display.variable} ${body.variable} h-full`}>
       <body className="min-h-full">
         <Providers>{children}</Providers>
       </body>

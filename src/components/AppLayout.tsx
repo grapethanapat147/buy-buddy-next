@@ -2,6 +2,7 @@ import Link from "next/link";
 import { isAdminEmail } from "@/lib/admin";
 import { getPlanIds } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
+import Mascot from "./Mascot";
 import SignOutButton from "./SignOutButton";
 
 export default async function AppLayout({
@@ -36,7 +37,8 @@ export default async function AppLayout({
             </svg>
           </Link>
           <Link href="/" className="flex items-center gap-1.5 text-xl font-bold text-brand">
-            <span aria-hidden="true">🛍️</span> BuyBuddy
+            <Mascot mood="happy" size={26} />
+            <span className="font-display tracking-tight">BuyBuddy</span>
           </Link>
         </header>
         <main className="rounded-2xl bg-cream-card p-5 shadow-soft">{children}</main>
@@ -48,7 +50,8 @@ export default async function AppLayout({
     <div className="mx-auto max-w-xl px-4 pb-10 pt-5">
       <header className="mb-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-1.5 text-xl font-bold text-brand">
-          <span aria-hidden="true">🛍️</span> BuyBuddy
+          <Mascot mood="happy" size={26} />
+          <span className="font-display tracking-tight">BuyBuddy</span>
         </Link>
         <nav className="flex items-center gap-1 text-sm">
           <Link

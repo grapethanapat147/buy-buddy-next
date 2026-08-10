@@ -3,10 +3,49 @@ import AppLayout from "@/components/AppLayout";
 import Mascot from "@/components/Mascot";
 import Card from "@/components/ui/Card";
 
-const perks: Array<[string, string]> = [
-  ["🎯", "แนะนำตามคุณ"],
-  ["💸", "คุ้มทุกบาท"],
-  ["📅", "วางแผนซื้อซ้ำ"],
+const iconProps = {
+  width: 22,
+  height: 22,
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.8,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+  "aria-hidden": true,
+};
+
+const perks: Array<{ label: string; icon: React.ReactNode }> = [
+  {
+    label: "แนะนำตามคุณ",
+    icon: (
+      <svg {...iconProps}>
+        <circle cx="12" cy="12" r="8" />
+        <circle cx="12" cy="12" r="3.4" />
+        <circle cx="12" cy="12" r="0.6" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    label: "คุ้มทุกบาท",
+    icon: (
+      <svg {...iconProps}>
+        <path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1" />
+        <path d="M20 8H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1Z" />
+        <circle cx="16.5" cy="13" r="1.3" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+  },
+  {
+    label: "วางแผนซื้อซ้ำ",
+    icon: (
+      <svg {...iconProps}>
+        <rect x="3.5" y="5" width="17" height="15" rx="2.5" />
+        <path d="M3.5 9.5h17M8 3.5v3M16 3.5v3" />
+        <circle cx="12" cy="14" r="1.6" fill="currentColor" stroke="none" />
+      </svg>
+    ),
+  },
 ];
 
 export default function Home() {
@@ -22,7 +61,7 @@ export default function Home() {
           ง่าย ๆ ตามงบ
         </h1>
         <p className="mx-auto mt-3 max-w-sm text-lg text-ink-soft">
-          ย้ายเข้าห้องใหม่ต้องซื้ออะไรบ้าง? บอกเรามาเลย เดี๋ยวจัดของให้ครบ คุ้มสุด ไม่บานปลาย 💛
+          ย้ายเข้าห้องใหม่ต้องซื้ออะไรบ้าง บอกงบมา เดี๋ยวจัดให้ครบ คุ้มสุด ไม่บานปลาย
         </p>
 
         <div className="mt-8 space-y-3">
@@ -46,7 +85,7 @@ export default function Home() {
         >
           <Mascot mood="thinking" size={40} />
           <div className="flex-1">
-            <div className="text-sm font-semibold text-ink">คุยกับ BuyBuddy 💬</div>
+            <div className="text-sm font-semibold text-ink">คุยกับ BuyBuddy</div>
             <div className="text-xs text-ink-muted">เล่าเรื่องห้องแบบสบาย ๆ เดี๋ยวจัดของให้</div>
           </div>
           <span aria-hidden="true" className="text-ink-muted">
@@ -55,12 +94,12 @@ export default function Home() {
         </Link>
 
         <div className="mt-10 grid grid-cols-3 gap-3">
-          {perks.map(([emoji, label]) => (
-            <Card key={label} className="p-4 text-center">
-              <div className="text-3xl" aria-hidden="true">
-                {emoji}
-              </div>
-              <div className="mt-2 text-sm font-medium text-ink-soft">{label}</div>
+          {perks.map((perk) => (
+            <Card key={perk.label} className="flex flex-col items-center p-4 text-center">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 text-brand">
+                {perk.icon}
+              </span>
+              <div className="mt-2 text-sm font-medium text-ink-soft">{perk.label}</div>
             </Card>
           ))}
         </div>

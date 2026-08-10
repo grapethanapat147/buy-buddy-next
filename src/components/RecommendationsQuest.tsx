@@ -199,8 +199,9 @@ export default function RecommendationsQuest({
       {/* Recommended for you — the curated quest, always shown first. */}
       {shownCategories.length > 0 && (
         <div className="mt-4">
-          <h2 className="flex items-center gap-1.5 text-sm font-bold text-brand-700">
-            <span aria-hidden="true">⭐</span> ของแนะนำสำหรับคุณ
+          <h2 className="flex items-center gap-2 text-sm font-bold text-brand-700">
+            <span className="h-4 w-1 rounded-full bg-brand" aria-hidden="true" />
+            ของแนะนำสำหรับคุณ
           </h2>
           <div className="mt-3 space-y-5">
             {shownCategories.map((cat) => {
@@ -257,8 +258,9 @@ export default function RecommendationsQuest({
       {/* Everything else — browse the full catalog without leaving the page. */}
       {shownOthers.length > 0 && (
         <div className="mt-8">
-          <h2 className="flex items-center gap-1.5 text-sm font-bold text-ink">
-            <span aria-hidden="true">🧺</span> ของอื่น ๆ ที่เพิ่มได้เอง
+          <h2 className="flex items-center gap-2 text-sm font-bold text-ink">
+            <span className="h-4 w-1 rounded-full bg-ink/25" aria-hidden="true" />
+            ของอื่น ๆ ที่เพิ่มได้เอง
           </h2>
           <p className="mt-0.5 text-xs text-ink-soft">อยากได้อย่างอื่นเพิ่ม เลือกได้เลย</p>
           <div className="mt-3 space-y-5">

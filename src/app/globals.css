@@ -11,3 +11,9 @@ body {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
 }
+
+/* Page titles wear the display face; -0.01em keeps Mitr tight and intentional. */
+h1 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+}
