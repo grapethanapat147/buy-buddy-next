@@ -17,7 +17,7 @@ const iconProps = {
 
 const perks: Array<{ label: string; icon: React.ReactNode }> = [
   {
-    label: "แนะนำตามคุณ",
+    label: "แนะนำ\nตามคุณ",
     icon: (
       <svg {...iconProps}>
         <circle cx="12" cy="12" r="8" />
@@ -27,7 +27,7 @@ const perks: Array<{ label: string; icon: React.ReactNode }> = [
     ),
   },
   {
-    label: "คุ้มทุกบาท",
+    label: "คุ้มค่า\nทุกบาท",
     icon: (
       <svg {...iconProps}>
         <path d="M4 7a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v1" />
@@ -37,7 +37,7 @@ const perks: Array<{ label: string; icon: React.ReactNode }> = [
     ),
   },
   {
-    label: "วางแผนซื้อซ้ำ",
+    label: "วางแผน\nซื้อซ้ำ",
     icon: (
       <svg {...iconProps}>
         <rect x="3.5" y="5" width="17" height="15" rx="2.5" />
@@ -95,11 +95,13 @@ export default function Home() {
 
         <div className="mt-10 grid grid-cols-3 gap-3">
           {perks.map((perk) => (
-            <Card key={perk.label} className="flex flex-col items-center p-4 text-center">
+            <Card key={perk.label} className="flex flex-col items-center px-2 py-4 text-center">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-50 text-brand">
                 {perk.icon}
               </span>
-              <div className="mt-2 text-sm font-medium text-ink-soft">{perk.label}</div>
+              <div className="mt-2 whitespace-pre-line break-keep text-xs font-medium leading-tight text-ink-soft">
+                {perk.label}
+              </div>
             </Card>
           ))}
         </div>
