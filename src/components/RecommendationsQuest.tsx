@@ -48,6 +48,13 @@ export type OtherCategory = {
   items: OtherItem[];
 };
 
+export type OwnedItem = {
+  productId: number;
+  name: string;
+  slug: string;
+  icon: string;
+};
+
 function FilterChip({
   active,
   onClick,
@@ -74,12 +81,14 @@ function FilterChip({
 export default function RecommendationsQuest({
   categories,
   otherCategories = [],
+  ownedItems = [],
   budget,
   plannedTotal,
   readinessPercent,
 }: {
   categories: QuestCategory[];
   otherCategories?: OtherCategory[];
+  ownedItems?: OwnedItem[];
   budget: number;
   plannedTotal: number;
   readinessPercent: number;
@@ -136,15 +145,41 @@ export default function RecommendationsQuest({
     <>
       <FlowTopNav backHref="/wizard" nextHref="/plan" />
       <h1 className="text-2xl font-semibold text-ink">จัดห้องกันเลย</h1>
-      <p className="mt-1 text-sm text-ink-soft">เก็บของจำเป็นให้ครบ แล้วห้องก็พร้อมอยู่</p>
+      <p className="mt-1 text-sm text-ink-soft">
+        {ownedItems.length > 0
+          ? "ข้ามของที่คุณมีแล้ว — เน้นเติมเฉพาะของที่ยังขาด"
+          : "เก็บของจำเป็นให้ครบ แล้วห้องก็พร้อมอยู่"}
+      </p>
 
       <div className="mt-3 space-y-2">
         <ReadinessMeter percent={readinessPercent} />
         <div className="rounded-2xl bg-cream-card p-4 shadow-soft">
-          <div className="mb-1.5 text-sm font-medium text-ink-soft">💰 งบ</div>
+          <div className="mb-1.5 text-sm font-medium text-ink-soft">งบ</div>
           <BudgetMeter total={plannedTotal} budget={budget} />
         </div>
       </div>
+
+      {ownedItems.length > 0 && (
+        <div className="mt-3 rounded-2xl border border-ink/8 bg-cream-sunk/50 p-3">
+          <div className="mb-2 flex items-center gap-1.5 text-sm font-medium text-ink-soft">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="text-emerald-600" aria-hidden="true">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            มีอยู่แล้วในห้อง · {ownedItems.length}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {ownedItems.map((it) => (
+              <span
+                key={it.productId}
+                className="flex items-center gap-1 rounded-full bg-cream-card px-2.5 py-1 text-xs text-ink-soft"
+              >
+                <span aria-hidden="true">{it.icon}</span>
+                {it.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {chipNames.length > 1 && (
         <div className="sticky top-0 z-20 -mx-5 mt-4 border-b border-ink/5 bg-cream-card/95 px-5 py-2.5 backdrop-blur">

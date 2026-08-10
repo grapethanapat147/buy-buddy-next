@@ -3,6 +3,7 @@ import AppLayout from "@/components/AppLayout";
 import RecommendationsQuest, {
   type OtherCategory,
   type OtherItem,
+  type OwnedItem,
   type QuestCategory,
   type QuestItem,
 } from "@/components/RecommendationsQuest";
@@ -62,13 +63,20 @@ export default async function RecommendationsPage() {
     .filter((i) => i.inPlan)
     .reduce((sum, i) => sum + i.lineTotal, 0);
 
-  // Everything the engine didn't surface, so the user can still browse the full
-  // catalog without leaving the quest — recommended first, then all the rest.
+  // Things the user told us they already own: don't recommend them, don't list
+  // them as "add me" — just acknowledge them so the room doesn't read as empty.
+  const ownedIdSet = new Set(spec.ownedProductIds);
+  const ownedItems: OwnedItem[] = products
+    .filter((p) => ownedIdSet.has(p.id))
+    .map((p) => ({ productId: p.id, name: p.name, slug: p.slug, icon: p.icon }));
+
+  // Everything else the engine didn't surface (and the user doesn't already own),
+  // so they can still browse the full catalog — recommended first, then the rest.
   const recIds = new Set(recs.map((r) => r.productId));
   const otherOrder: string[] = [];
   const otherGrouped = new Map<string, OtherItem[]>();
   for (const p of products) {
-    if (recIds.has(p.id)) {
+    if (recIds.has(p.id) || ownedIdSet.has(p.id)) {
       continue;
     }
     const cat = p.categoryName || "อื่น ๆ";
@@ -95,6 +103,7 @@ export default async function RecommendationsPage() {
       <RecommendationsQuest
         categories={categories}
         otherCategories={otherCategories}
+        ownedItems={ownedItems}
         budget={spec.budget}
         plannedTotal={plannedTotal}
         readinessPercent={readinessPercent}

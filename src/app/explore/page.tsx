@@ -6,7 +6,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import SwipeableItemRow from "@/components/SwipeableItemRow";
 import { getProducts } from "@/lib/catalog";
 import { cheapestPrice } from "@/lib/recommendation/engine";
-import { getPlanIds } from "@/lib/session";
+import { getPlanIds, getSpec } from "@/lib/session";
 
 export default async function ExplorePage({
   searchParams,
@@ -16,6 +16,8 @@ export default async function ExplorePage({
   const { category = "", q = "" } = await searchParams;
   const products = await getProducts();
   const planIds = new Set(await getPlanIds());
+  const spec = await getSpec();
+  const ownedIdSet = new Set(spec?.ownedProductIds ?? []);
 
   const categories: string[] = [];
   for (const p of products) {
@@ -57,8 +59,15 @@ export default async function ExplorePage({
             title={p.name}
             href={`/products/${p.slug}`}
             subtitle={
-              <span className="tabular-nums">
-                {p.categoryName} · ฿{cheapestPrice(p).toLocaleString()}
+              <span className="flex items-center gap-2">
+                <span className="tabular-nums">
+                  {p.categoryName} · ฿{cheapestPrice(p).toLocaleString()}
+                </span>
+                {ownedIdSet.has(p.id) && (
+                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
+                    มีแล้ว
+                  </span>
+                )}
               </span>
             }
           />
