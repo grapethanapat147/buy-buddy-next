@@ -224,7 +224,7 @@ export default function PlanView({
             </div>
           )}
 
-          <p className="mb-2 text-xs text-ink-muted">ปัดซ้ายที่รายการเพื่อเอาออกจากกระเป๋า 👈</p>
+          <p className="mb-2 text-xs text-ink-muted">ปัดซ้ายที่รายการเพื่อเอาออกจากกระเป๋า</p>
           <div className="space-y-2">
             <AnimatePresence initial={false}>
               {shown.map((it) => (
