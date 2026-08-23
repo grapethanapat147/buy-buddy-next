@@ -42,6 +42,7 @@ export default async function PlanPage() {
       productId: product.id,
       name: product.name,
       icon: product.icon,
+      imageUrl: product.imageUrl,
       tier: product.tier,
       category: product.categoryName,
       lineTotal,
@@ -62,6 +63,7 @@ export default async function PlanPage() {
       return {
         id: p.id,
         icon: p.icon,
+        imageUrl: p.imageUrl,
         name: p.name,
         price: cheapestPrice(p),
         cadence: p.restockCadence ?? "other",

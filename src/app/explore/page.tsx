@@ -56,6 +56,7 @@ export default async function ExplorePage({
             productId={p.id}
             inPlan={planIds.has(p.id)}
             icon={p.icon}
+            imageUrl={p.imageUrl}
             title={p.name}
             href={`/products/${p.slug}`}
             subtitle={

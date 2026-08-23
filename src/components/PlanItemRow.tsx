@@ -17,6 +17,7 @@ export default function PlanItemRow({
   productId,
   name,
   icon,
+  imageUrl = null,
   tier,
   lineTotal,
   suggested,
@@ -25,6 +26,7 @@ export default function PlanItemRow({
   productId: number;
   name: string;
   icon: string;
+  imageUrl?: string | null;
   tier: ProductTier;
   lineTotal: number;
   suggested: boolean;
@@ -61,7 +63,7 @@ export default function PlanItemRow({
         } ${pending ? "opacity-50" : ""}`}
       >
         <div className="flex items-center gap-3">
-          <IconTile icon={icon} />
+          <IconTile icon={icon} imageUrl={imageUrl} />
           <div className="min-w-0 flex-1">
             <div className="truncate text-sm font-semibold text-ink">{name}</div>
             <div className="mt-0.5 text-xs text-ink-muted">

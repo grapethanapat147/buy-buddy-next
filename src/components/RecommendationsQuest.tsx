@@ -22,6 +22,7 @@ export type QuestItem = {
   name: string;
   slug: string;
   icon: string;
+  imageUrl: string | null;
   tier: ProductTier;
   lineTotal: number;
   inPlan: boolean;
@@ -39,6 +40,7 @@ export type OtherItem = {
   name: string;
   slug: string;
   icon: string;
+  imageUrl: string | null;
   price: number;
   inPlan: boolean;
 };
@@ -227,6 +229,7 @@ export default function RecommendationsQuest({
                         productId={it.productId}
                         inPlan={it.inPlan}
                         icon={it.icon}
+                        imageUrl={it.imageUrl}
                         title={it.name}
                         href={`/products/${it.slug}`}
                         subtitle={
@@ -274,6 +277,7 @@ export default function RecommendationsQuest({
                       productId={it.productId}
                       inPlan={it.inPlan}
                       icon={it.icon}
+                      imageUrl={it.imageUrl}
                       title={it.name}
                       href={`/products/${it.slug}`}
                       subtitle={<span className="tabular-nums">฿{it.price.toLocaleString()}</span>}

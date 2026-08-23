@@ -10,6 +10,7 @@ import { setRestockDay, toggleRestockDone } from "@/app/actions";
 export type RestockItem = {
   id: number;
   icon: string;
+  imageUrl: string | null;
   name: string;
   price: number;
   cadence: string;
@@ -186,7 +187,7 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
                   onClick={() => setSelectedId(selected ? null : it.id)}
                   className="flex min-w-0 flex-1 items-center gap-3 text-left"
                 >
-                  <IconTile icon={it.icon} dimmed={it.done} />
+                  <IconTile icon={it.icon} imageUrl={it.imageUrl} dimmed={it.done} />
                   <span className="min-w-0 flex-1">
                     <span
                       className={`block truncate text-sm ${

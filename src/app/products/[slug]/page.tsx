@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import AppLayout from "@/components/AppLayout";
-import ProductImage from "@/components/ProductImage";
+import IconTile from "@/components/IconTile";
 import {
   AddToPlanButton,
   AddBundleButton,
@@ -40,7 +40,7 @@ export default async function ProductDetailPage({
   return (
     <AppLayout>
       <div className="flex items-center gap-3">
-        <ProductImage imageUrl={product.imageUrl} icon={product.icon} name={product.name} size="lg" />
+        <IconTile icon={product.icon} imageUrl={product.imageUrl} size="lg" />
         <h1 className="text-2xl font-semibold text-ink">{product.name}</h1>
       </div>
 
@@ -101,9 +101,7 @@ export default async function ProductDetailPage({
                 key={b.id}
                 className="flex items-center gap-2 border-b border-ink/5 p-3 last:border-0"
               >
-                <span className="text-lg" aria-hidden="true">
-                  {b.icon}
-                </span>
+                <IconTile icon={b.icon} imageUrl={b.imageUrl} />
                 <span className="flex-1 text-sm text-ink">{b.name}</span>
                 <span className="text-sm text-ink-soft tabular-nums">
                   ฿{cheapestPrice(b).toLocaleString()}

@@ -17,6 +17,7 @@ export default function SwipeableItemRow({
   productId,
   inPlan,
   icon,
+  imageUrl = null,
   title,
   href,
   subtitle,
@@ -24,6 +25,7 @@ export default function SwipeableItemRow({
   productId: number;
   inPlan: boolean;
   icon: string;
+  imageUrl?: string | null;
   title: string;
   href: string;
   subtitle: React.ReactNode;
@@ -86,7 +88,7 @@ export default function SwipeableItemRow({
             : "border-ink/8 bg-cream-card"
         }`}
       >
-        <IconTile icon={icon} />
+        <IconTile icon={icon} imageUrl={imageUrl} />
         <div className="min-w-0 flex-1">
           <Link
             href={href}

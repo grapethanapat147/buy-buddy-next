@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AppLayout from "@/components/AppLayout";
-import ProductImage from "@/components/ProductImage";
+import IconTile from "@/components/IconTile";
 import Button from "@/components/ui/Button";
 import { getProducts } from "@/lib/catalog";
 import { MARKETPLACES } from "@/lib/marketplace";
@@ -44,7 +44,7 @@ export default async function AdminProductPage({
       </Link>
 
       <div className="mt-2 flex items-center gap-3">
-        <ProductImage imageUrl={product.imageUrl} icon={product.icon} name={product.name} />
+        <IconTile icon={product.icon} imageUrl={product.imageUrl} />
         <div>
           <h1 className="text-xl font-semibold text-ink">{product.name}</h1>
           <p className="text-xs text-ink-soft">

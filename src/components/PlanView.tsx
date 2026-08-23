@@ -27,6 +27,7 @@ export type PlanLine = {
   productId: number;
   name: string;
   icon: string;
+  imageUrl: string | null;
   tier: ProductTier;
   category: string;
   lineTotal: number;
@@ -240,6 +241,7 @@ export default function PlanView({
                     productId={it.productId}
                     name={it.name}
                     icon={it.icon}
+                    imageUrl={it.imageUrl}
                     tier={it.tier}
                     lineTotal={it.lineTotal}
                     suggested={it.suggested}

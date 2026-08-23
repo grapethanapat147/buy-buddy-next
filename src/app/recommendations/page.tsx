@@ -22,12 +22,14 @@ export default async function RecommendationsPage() {
   const recs = recommend(products, spec);
   const planIds = new Set(await getPlanIds());
   const bySlug = new Map(products.map((p) => [p.id, p.slug]));
+  const imageBy = new Map(products.map((p) => [p.id, p.imageUrl]));
 
   const items: QuestItem[] = recs.map((r) => ({
     productId: r.productId,
     name: r.name,
     slug: bySlug.get(r.productId) ?? String(r.productId),
     icon: r.icon,
+    imageUrl: imageBy.get(r.productId) ?? null,
     tier: r.tier,
     lineTotal: r.lineTotal,
     inPlan: planIds.has(r.productId),
@@ -89,6 +91,7 @@ export default async function RecommendationsPage() {
       name: p.name,
       slug: p.slug,
       icon: p.icon,
+      imageUrl: p.imageUrl,
       price: cheapestPrice(p),
       inPlan: planIds.has(p.id),
     });
