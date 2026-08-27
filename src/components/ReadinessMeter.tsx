@@ -19,7 +19,7 @@ export default function ReadinessMeter({ percent }: { percent: number }) {
       </div>
       <div className="mt-2 h-3 overflow-hidden rounded-full bg-white/70">
         <motion.div
-          className="h-full rounded-full bg-brand"
+          className="h-full rounded-full bg-gradient-to-r from-brand-100 via-brand to-brand-500"
           initial={false}
           animate={{ width: `${percent}%` }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}

@@ -44,7 +44,7 @@ export default async function ProductDetailPage({
         <h1 className="text-2xl font-semibold text-ink">{product.name}</h1>
       </div>
 
-      <div className="mt-3 overflow-hidden rounded-xl border border-ink/10 bg-cream-card shadow-soft">
+      <div className="mt-3 overflow-hidden rounded-2xl border border-ink/10 bg-cream-card shadow-soft">
         <div className="flex items-center justify-between p-3">
           <span className="text-sm font-semibold text-ink">เทียบราคาจากร้านค้า</span>
           <span className="text-xs text-ink-muted">แตะร้าน = ไปซื้อ ↗</span>
@@ -95,7 +95,7 @@ export default async function ProductDetailPage({
       {bundle.length > 0 && (
         <>
           <p className="mt-4 text-sm font-semibold text-ink">มักซื้อคู่กับ</p>
-          <div className="mt-2 rounded-xl border border-ink/8 bg-cream-card shadow-soft">
+          <div className="mt-2 rounded-2xl border border-ink/8 bg-cream-card shadow-soft">
             {bundle.map((b) => (
               <div
                 key={b.id}

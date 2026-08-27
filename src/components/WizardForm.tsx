@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { motion } from "motion/react";
 import Link from "next/link";
 import { saveSpecForm } from "@/app/actions";
 import Button from "@/components/ui/Button";
@@ -78,7 +79,7 @@ const STEPS: Step[] = [
       { value: "comfort", emoji: "✨", label: "อยากได้ครบ" },
     ],
   },
-  { kind: "have", key: "have", label: "ในห้องมีอะไรอยู่แล้วบ้าง", hint: "เลือกที่มีอยู่แล้ว เดี๋ยวเราไม่แนะนำซ้ำ · จะได้เหลืองบไปซื้ออย่างอื่น" },
+  { kind: "have", key: "have", label: "ในห้องมีอะไรอยู่แล้วบ้าง", hint: "ห้องมีเฟอร์มาให้ หรือมีของเดิมอยู่แล้ว เลือกไว้เลย — เราจะแนะนำเฉพาะของที่ยังขาด" },
 ];
 
 const toggleClass = (active: boolean) =>
@@ -114,6 +115,8 @@ export default function WizardForm({
   const [owned, setOwned] = useState<Record<number, boolean>>({});
   const [budget, setBudget] = useState("5000");
   const [occupants, setOccupants] = useState("1");
+  /** +1 forward / -1 back — the question card slides in from that side. */
+  const [dir, setDir] = useState(1);
   const advanceTimer = useRef<number | null>(null);
 
   const ownedIds = ownedCandidates.filter((c) => owned[c.id]).map((c) => c.id);
@@ -127,9 +130,13 @@ export default function WizardForm({
       advanceTimer.current = null;
     }
   };
-  const goNext = () => setStep((s) => Math.min(total - 1, s + 1));
+  const goNext = () => {
+    setDir(1);
+    setStep((s) => Math.min(total - 1, s + 1));
+  };
   const goPrev = () => {
     clearAdvance();
+    setDir(-1);
     setStep((s) => Math.max(0, s - 1));
   };
 
@@ -176,7 +183,7 @@ export default function WizardForm({
         )}
         <div className="h-2 flex-1 overflow-hidden rounded-full bg-cream-sunk">
           <div
-            className="h-full rounded-full bg-brand transition-[width] duration-300"
+            className="h-full rounded-full bg-gradient-to-r from-brand-100 via-brand to-brand-500 transition-[width] duration-300"
             style={{ width: `${((step + 1) / total) * 100}%` }}
           />
         </div>
@@ -185,8 +192,14 @@ export default function WizardForm({
         </span>
       </div>
 
-      {/* Question */}
-      <div className="mt-6 min-h-[240px]">
+      {/* Question — remounts per step and glides in from the travel direction. */}
+      <div className="mt-6 min-h-[240px] overflow-x-clip">
+        <motion.div
+          key={step}
+          initial={{ opacity: 0, x: dir * 28 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+        >
         <h1 className="text-2xl font-bold text-ink">{cur.label}</h1>
         {cur.hint && <p className="mt-1.5 text-sm text-ink-soft">{cur.hint}</p>}
 
@@ -331,6 +344,7 @@ export default function WizardForm({
             ))}
           </div>
         )}
+        </motion.div>
       </div>
 
       {/* Sticky footer — the forward action stays pinned with a gradient fade above it. */}

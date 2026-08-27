@@ -52,8 +52,12 @@ export default function Home() {
   return (
     <AppLayout>
       <div className="py-6 text-center">
-        <div className="mx-auto mb-5 flex items-center justify-center">
-          <Mascot mood="happy" size={180} />
+        <div className="relative mx-auto mb-5 flex items-center justify-center">
+          <div
+            className="absolute h-44 w-44 rounded-full bg-brand-100/70 blur-3xl"
+            aria-hidden="true"
+          />
+          <Mascot mood="happy" size={180} className="relative" />
         </div>
         <h1 className="text-3xl font-bold leading-tight text-ink">
           จัดของเข้าห้อง
@@ -67,7 +71,7 @@ export default function Home() {
         <div className="mt-8 space-y-3">
           <Link
             href="/wizard"
-            className="block rounded-full bg-brand p-4 text-center text-lg font-semibold text-white shadow-soft transition hover:bg-brand-500 active:scale-[0.98]"
+            className="block rounded-full bg-brand-grad p-4 text-center text-lg font-semibold text-white shadow-soft transition hover:brightness-105 active:scale-[0.98]"
           >
             เริ่มเลย — ตอบไม่กี่ข้อ
           </Link>

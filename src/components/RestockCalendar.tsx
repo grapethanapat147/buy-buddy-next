@@ -87,7 +87,7 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
 
   return (
     <div className="mt-4">
-      <div className="mb-3 flex items-center gap-2 rounded-xl bg-cream-sunk p-3">
+      <div className="mb-3 flex items-center gap-2 rounded-2xl bg-cream-sunk p-3">
         <Mascot mood={selectedId !== null ? "search" : "holding"} size={40} />
         <p className="text-xs text-ink-soft">
           {selectedId !== null ? (
@@ -175,7 +175,7 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
               <motion.div
                 key={it.id}
                 layout
-                className={`flex items-center gap-2 rounded-xl border p-2.5 transition ${
+                className={`flex items-center gap-2 rounded-2xl border p-2.5 transition ${
                   selected
                     ? "border-brand bg-brand-50 shadow-soft"
                     : it.done

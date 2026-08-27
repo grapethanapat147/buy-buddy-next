@@ -3,11 +3,11 @@ import WizardForm, { type OwnedCandidate } from "@/components/WizardForm";
 import { getProducts } from "@/lib/catalog";
 
 /**
- * Big-ticket items a renter most often already owns and brings along. Kept to a
- * short curated list (the wizard can't ask about all 60 products) and resolved
- * against the catalog, so names/icons stay in sync and a missing slug is simply
- * skipped. Room fixtures (wardrobe, dining table, ...) are asked separately, so
- * they are deliberately not repeated here.
+ * Items a renter most often already has — either brought along or left behind in
+ * a furnished room (the bigger renter group). Curated (the wizard can't ask about
+ * all 60 products) and resolved against the catalog, so names/icons stay in sync
+ * and a missing slug is simply skipped. Room fixtures (wardrobe, dining table,
+ * counter, aircon) are asked separately, so they are deliberately not repeated.
  */
 const OWNED_CANDIDATE_SLUGS = [
   "mini-fridge",
@@ -18,6 +18,12 @@ const OWNED_CANDIDATE_SLUGS = [
   "kettle",
   "work-desk",
   "induction-cooker",
+  "work-chair",
+  "sofa-bed",
+  "blackout-curtain",
+  "desk-lamp",
+  "tall-shelf",
+  "laundry-rack",
 ];
 
 export default async function WizardPage() {

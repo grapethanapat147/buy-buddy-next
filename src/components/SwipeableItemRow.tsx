@@ -52,8 +52,8 @@ export default function SwipeableItemRow({
   };
 
   return (
-    <div className="relative overflow-hidden rounded-xl">
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-between rounded-xl bg-cream-sunk px-4">
+    <div className="relative overflow-hidden rounded-2xl">
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-between rounded-2xl bg-cream-sunk px-4">
         <motion.span
           style={{ opacity: addHint }}
           className="flex items-center gap-1 text-sm font-semibold text-brand-700"
@@ -82,7 +82,7 @@ export default function SwipeableItemRow({
             apply(false);
           }
         }}
-        className={`relative z-10 flex touch-pan-y items-center gap-3 rounded-xl border p-3 shadow-soft transition-colors ${
+        className={`relative z-10 flex touch-pan-y items-center gap-3 rounded-2xl border p-3 shadow-soft transition-colors ${
           optimisticInPlan
             ? "border-brand/40 bg-brand-50"
             : "border-ink/8 bg-cream-card"

@@ -39,10 +39,10 @@ export default function PlanItemRow({
   const remove = () => startTransition(() => removeFromPlan(productId));
 
   return (
-    <div className="relative overflow-hidden rounded-xl">
+    <div className="relative overflow-hidden rounded-2xl">
       <motion.div
         style={{ opacity: hint }}
-        className="pointer-events-none absolute inset-0 flex items-center justify-end gap-1.5 rounded-xl bg-rose-50 pr-5 text-sm font-semibold text-rose-600"
+        className="pointer-events-none absolute inset-0 flex items-center justify-end gap-1.5 rounded-2xl bg-rose-50 pr-5 text-sm font-semibold text-rose-600"
       >
         <span aria-hidden="true">🗑️</span> เอาออกจากกระเป๋า
       </motion.div>
@@ -58,7 +58,7 @@ export default function PlanItemRow({
             remove();
           }
         }}
-        className={`relative z-10 touch-pan-y rounded-xl border p-3 shadow-soft ${
+        className={`relative z-10 touch-pan-y rounded-2xl border p-3 shadow-soft ${
           suggested ? "border-amber-200 bg-amber-50" : "border-ink/8 bg-cream-card"
         } ${pending ? "opacity-50" : ""}`}
       >

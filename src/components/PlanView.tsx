@@ -85,7 +85,7 @@ function SaveButton() {
     <button
       onClick={() => startTransition(() => savePlanToAccount())}
       disabled={pending}
-      className="w-full rounded-full bg-brand p-4 text-lg font-semibold text-white shadow-soft transition hover:bg-brand-500 active:scale-[0.98] disabled:opacity-60"
+      className="w-full rounded-full bg-brand-grad p-4 text-lg font-semibold text-white shadow-soft transition hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
     >
       เซฟแผนไว้ในบัญชี
     </button>
@@ -162,7 +162,12 @@ export default function PlanView({
       </div>
 
       {tab === "list" && (
-        <>
+        <motion.div
+          key="tab-list"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, ease: EASE }}
+        >
           <div className="my-4">
             <BudgetMeter total={total} budget={budget} />
           </div>
@@ -174,7 +179,7 @@ export default function PlanView({
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="mb-3 rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"
+                className="mb-3 rounded-2xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700"
               >
                 <span>
                   ของจำเป็นล้วน ๆ ก็เกินงบ ฿{overBudgetBy.toLocaleString()} —
@@ -188,7 +193,7 @@ export default function PlanView({
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="mb-3 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800"
+                className="mb-3 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800"
               >
                 <span>
                   เกินงบ ฿{overBudgetBy.toLocaleString()} —
@@ -202,7 +207,7 @@ export default function PlanView({
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
-                className="mb-3 flex gap-2 rounded-xl bg-emerald-50 p-3 text-sm text-emerald-700"
+                className="mb-3 flex gap-2 rounded-2xl bg-emerald-50 p-3 text-sm text-emerald-700"
               >
                 <span aria-hidden="true">✓</span>
                 <span>อยู่ในงบ · เหลือ ฿{(budget - total).toLocaleString()}</span>
@@ -292,10 +297,19 @@ export default function PlanView({
               </div>
             </div>
           )}
-        </>
+        </motion.div>
       )}
 
-      {tab === "calendar" && <RestockCalendar items={restockItems} />}
+      {tab === "calendar" && (
+        <motion.div
+          key="tab-calendar"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, ease: EASE }}
+        >
+          <RestockCalendar items={restockItems} />
+        </motion.div>
+      )}
 
       <div className="mt-6 border-t border-ink/10 pt-4">
         {isLoggedIn ? (
@@ -303,7 +317,7 @@ export default function PlanView({
         ) : (
           <Link
             href="/register"
-            className="block rounded-full bg-brand p-4 text-center text-lg font-semibold text-white shadow-soft transition hover:bg-brand-500 active:scale-[0.98]"
+            className="block rounded-full bg-brand-grad p-4 text-center text-lg font-semibold text-white shadow-soft transition hover:brightness-105 active:scale-[0.98]"
           >
             เซฟแผน (สมัคร/เข้าสู่ระบบ)
           </Link>

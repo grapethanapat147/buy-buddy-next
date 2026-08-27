@@ -69,7 +69,7 @@ export default function AssistantChat() {
                 {msg.cta && (
                   <Link
                     href="/recommendations"
-                    className="mt-3 block rounded-full bg-brand px-4 py-2.5 text-center text-sm font-semibold text-white shadow-soft transition hover:bg-brand-500 active:scale-[0.98]"
+                    className="mt-3 block rounded-full bg-brand-grad px-4 py-2.5 text-center text-sm font-semibold text-white shadow-soft transition hover:brightness-105 active:scale-[0.98]"
                   >
                     ดูของที่จัดให้ →
                   </Link>

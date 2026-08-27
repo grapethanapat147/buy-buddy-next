@@ -6,10 +6,25 @@ html {
 }
 
 body {
-    background: var(--color-cream);
+    /* Warm glow at the top melting into cream — reads hand-tuned, not flat. */
+    background:
+        radial-gradient(120% 45% at 50% 0%, var(--color-cream-sunk) 0%, var(--color-cream) 70%)
+            fixed,
+        var(--color-cream);
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+}
+
+/* Primary-CTA surface: a soft top-light over the brand orange so big buttons
+   feel dimensional instead of flat-filled. Pair with hover:brightness-105. */
+.bg-brand-grad {
+    background-image: linear-gradient(
+        180deg,
+        #ff9d82 0%,
+        var(--color-brand) 55%,
+        var(--color-brand-500) 100%
+    );
 }
 
 /* Page titles wear the display face; -0.01em keeps Mitr tight and intentional. */

@@ -30,7 +30,7 @@ export function AddToPlanButton({
       className={`mt-4 w-full rounded-full p-4 text-lg font-semibold shadow-soft transition active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none ${
         optimisticInPlan
           ? "bg-brand-50 text-brand-700"
-          : "bg-brand text-white hover:bg-brand-500"
+          : "bg-brand-grad text-white hover:brightness-105"
       }`}
     >
       <span className="animate-pop" key={String(optimisticInPlan)}>
