@@ -19,7 +19,7 @@ export default function AssistantChat() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      text: "สวัสดี! เล่าเรื่องห้องของคุณมาได้เลย — งบเท่าไหร่ อยู่กี่คน ทำอาหารไหม เดี๋ยวจัดของให้ 😊",
+      text: "สวัสดี เล่าเรื่องห้องของคุณมาได้เลย — งบเท่าไหร่ อยู่กี่คน ทำอาหารไหม เดี๋ยวจัดของให้",
     },
   ]);
   const [input, setInput] = useState("");
