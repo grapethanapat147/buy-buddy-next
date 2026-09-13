@@ -20,6 +20,7 @@ export default function SwipeableItemRow({
   imageUrl = null,
   title,
   href,
+  price,
   subtitle,
 }: {
   productId: number;
@@ -28,7 +29,9 @@ export default function SwipeableItemRow({
   imageUrl?: string | null;
   title: string;
   href: string;
-  subtitle: React.ReactNode;
+  /** Shown in its own column, heavier than the name — shoppers scan price first. */
+  price: number;
+  subtitle?: React.ReactNode;
 }) {
   const [optimisticInPlan, setOptimisticInPlan] = useOptimistic(inPlan);
   const [, startTransition] = useTransition();
@@ -58,13 +61,13 @@ export default function SwipeableItemRow({
           style={{ opacity: addHint }}
           className="flex items-center gap-1 text-sm font-semibold text-brand-700"
         >
-          ＋ เพิ่มลงกระเป๋า
+          ＋ เพิ่ม
         </motion.span>
         <motion.span
           style={{ opacity: removeHint }}
           className="ml-auto flex items-center gap-1 text-sm font-semibold text-rose-500"
         >
-          เอาออก －
+          เอาออก
         </motion.span>
       </div>
 
@@ -93,12 +96,15 @@ export default function SwipeableItemRow({
           <Link
             href={href}
             draggable={false}
-            className="text-sm font-semibold text-ink transition-colors hover:text-brand"
+            className="text-sm font-medium text-ink transition-colors hover:text-brand"
           >
             {title}
           </Link>
-          <div className="mt-0.5 text-xs text-ink-soft">{subtitle}</div>
+          {subtitle && <div className="mt-0.5 text-xs text-ink-soft">{subtitle}</div>}
         </div>
+        <span className="shrink-0 text-base font-bold tabular-nums text-ink">
+          ฿{price.toLocaleString()}
+        </span>
         <button
           onClick={() => apply(!optimisticInPlan)}
           aria-label={optimisticInPlan ? "เอาออกจากกระเป๋า" : "เก็บลงกระเป๋า"}

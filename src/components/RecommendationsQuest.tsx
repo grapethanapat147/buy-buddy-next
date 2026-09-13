@@ -69,7 +69,7 @@ function FilterChip({
   return (
     <button
       onClick={onClick}
-      className={`rounded-full px-3 py-1 text-sm transition ${
+      className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-sm transition ${
         active
           ? "bg-brand-50 font-semibold text-brand-700"
           : "border border-ink/10 text-ink-soft hover:bg-cream-sunk"
@@ -145,7 +145,7 @@ export default function RecommendationsQuest({
 
   return (
     <>
-      <FlowTopNav backHref="/wizard" nextHref="/plan" />
+      <FlowTopNav backHref="/wizard" nextHref="/plan" nextLabel="กระเป๋า" />
       <h1 className="text-2xl font-semibold text-ink">จัดห้องกันเลย</h1>
       <p className="mt-1 text-sm text-ink-soft">
         {ownedItems.length > 0
@@ -184,8 +184,8 @@ export default function RecommendationsQuest({
       )}
 
       {chipNames.length > 1 && (
-        <div className="sticky top-0 z-20 -mx-5 mt-4 border-b border-ink/5 bg-cream-card/95 px-5 py-2.5 backdrop-blur">
-          <div className="flex flex-wrap gap-2">
+        <div className="sticky top-0 z-20 -mx-5 mt-4 border-b border-ink/5 bg-cream-card/95 py-2.5 backdrop-blur">
+          <div className="no-scrollbar flex gap-2 overflow-x-auto px-5">
             <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>
               ทั้งหมด
             </FilterChip>
@@ -232,14 +232,12 @@ export default function RecommendationsQuest({
                         imageUrl={it.imageUrl}
                         title={it.name}
                         href={`/products/${it.slug}`}
+                        price={it.lineTotal}
                         subtitle={
-                          <span className="flex items-center gap-2">
-                            <span className="tabular-nums">฿{it.lineTotal.toLocaleString()}</span>
-                            <span
-                              className={`inline-block rounded-full px-2 py-0.5 text-[11px] ${tierBadge[it.tier]}`}
-                            >
-                              {tierLabel[it.tier]}
-                            </span>
+                          <span
+                            className={`inline-block rounded-full px-2 py-0.5 text-[11px] ${tierBadge[it.tier]}`}
+                          >
+                            {tierLabel[it.tier]}
                           </span>
                         }
                       />
@@ -280,7 +278,7 @@ export default function RecommendationsQuest({
                       imageUrl={it.imageUrl}
                       title={it.name}
                       href={`/products/${it.slug}`}
-                      subtitle={<span className="tabular-nums">฿{it.price.toLocaleString()}</span>}
+                      price={it.price}
                     />
                   ))}
                 </div>

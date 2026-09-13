@@ -197,9 +197,15 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
                       {it.name}
                     </span>
                     <span className="block text-xs text-ink-muted">
-                      {cadenceLabel[it.cadence] ?? "ตามรอบ"} · วันที่ {Math.min(daysInMonth, it.day)} · ฿
-                      {it.price.toLocaleString()}
+                      {cadenceLabel[it.cadence] ?? "ตามรอบ"} · วันที่ {Math.min(daysInMonth, it.day)}
                     </span>
+                  </span>
+                  <span
+                    className={`shrink-0 text-base font-bold tabular-nums ${
+                      it.done ? "text-ink-muted" : "text-ink"
+                    }`}
+                  >
+                    ฿{it.price.toLocaleString()}
                   </span>
                   {selected && (
                     <span className="shrink-0 rounded-full bg-brand px-2 py-0.5 text-[11px] font-semibold text-white">

@@ -22,15 +22,18 @@ export function ArrowRight() {
 }
 
 /**
- * Top-corner arrow navigation for the flow: back on the top-left, next on the
- * top-right. A missing side keeps its slot so the row stays balanced.
+ * Top-corner navigation for the flow: a back arrow on the left, and on the right
+ * a labelled pill — a bare arrow left people guessing where it went.
  */
 export default function FlowTopNav({
   backHref,
   nextHref,
+  nextLabel,
 }: {
   backHref?: string;
   nextHref?: string;
+  /** Names the destination; without it the forward pill is not rendered. */
+  nextLabel?: string;
 }) {
   return (
     <div className="mb-3 flex items-center justify-between">
@@ -41,8 +44,12 @@ export default function FlowTopNav({
       ) : (
         <span className="h-9 w-9" />
       )}
-      {nextHref ? (
-        <Link href={nextHref} aria-label="ไปต่อ" className={arrowBtnClass}>
+      {nextHref && nextLabel ? (
+        <Link
+          href={nextHref}
+          className="flex h-9 items-center gap-1.5 rounded-full border border-ink/15 pl-3.5 pr-3 text-sm font-medium text-ink-soft transition hover:bg-cream-sunk hover:text-ink active:scale-95 focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none"
+        >
+          {nextLabel}
           <ArrowRight />
         </Link>
       ) : (

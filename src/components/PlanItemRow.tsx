@@ -65,11 +65,12 @@ export default function PlanItemRow({
         <div className="flex items-center gap-3">
           <IconTile icon={icon} imageUrl={imageUrl} />
           <div className="min-w-0 flex-1">
-            <div className="truncate text-sm font-semibold text-ink">{name}</div>
-            <div className="mt-0.5 text-xs text-ink-muted">
-              <span className="tabular-nums">฿{lineTotal.toLocaleString()}</span> · {tierLabel[tier]}
-            </div>
+            <div className="truncate text-sm font-medium text-ink">{name}</div>
+            <div className="mt-0.5 text-xs text-ink-muted">{tierLabel[tier]}</div>
           </div>
+          <span className="shrink-0 text-base font-bold tabular-nums text-ink">
+            ฿{lineTotal.toLocaleString()}
+          </span>
           <button
             onClick={remove}
             disabled={pending}

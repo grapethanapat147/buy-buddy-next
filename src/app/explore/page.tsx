@@ -45,11 +45,7 @@ export default async function ExplorePage({
       <h1 className="text-2xl font-semibold text-ink">เลือกดูของเอง</h1>
       <ExploreControls categories={categories} activeCategory={category} query={q} />
 
-      <p className="mt-2 text-xs text-ink-muted">
-        เคล็ดลับ: ปัดขวาเพื่อเพิ่ม · ปัดซ้ายเพื่อเอาออก
-      </p>
-
-      <div className="mt-3 space-y-2">
+      <div className="mt-4 space-y-2">
         {filtered.map((p) => (
           <SwipeableItemRow
             key={p.id}
@@ -59,11 +55,10 @@ export default async function ExplorePage({
             imageUrl={p.imageUrl}
             title={p.name}
             href={`/products/${p.slug}`}
+            price={cheapestPrice(p)}
             subtitle={
               <span className="flex items-center gap-2">
-                <span className="tabular-nums">
-                  {p.categoryName} · ฿{cheapestPrice(p).toLocaleString()}
-                </span>
+                <span>{p.categoryName}</span>
                 {ownedIdSet.has(p.id) && (
                   <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
                     มีแล้ว
@@ -119,13 +114,11 @@ export default async function ExplorePage({
                     productId={p.id}
                     inPlan={planIds.has(p.id)}
                     icon={p.icon}
+                    imageUrl={p.imageUrl}
                     title={p.name}
                     href={`/products/${p.slug}`}
-                    subtitle={
-                      <span className="tabular-nums">
-                        {p.categoryName} · ฿{cheapestPrice(p).toLocaleString()}
-                      </span>
-                    }
+                    price={cheapestPrice(p)}
+                    subtitle={<span>{p.categoryName}</span>}
                   />
                 ))}
               </div>

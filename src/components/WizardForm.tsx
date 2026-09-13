@@ -50,9 +50,9 @@ const STEPS: Step[] = [
   {
     kind: "choice", key: "cooking", label: "ทำอาหารเองบ่อยแค่ไหน",
     options: [
-      { value: "never", emoji: "🥡", label: "ไม่ทำเลย", sub: "สั่ง/ซื้อกิน" },
-      { value: "sometimes", emoji: "🍜", label: "ทำบ้าง", sub: "อุ่น/ต้มง่าย ๆ" },
-      { value: "often", emoji: "🍳", label: "ทำบ่อย", sub: "ทำเป็นประจำ" },
+      { value: "never", emoji: "🥡", label: "ไม่ทำเลย", sub: "0 วัน/สัปดาห์" },
+      { value: "sometimes", emoji: "🍜", label: "ทำบ้าง", sub: "1–3 วัน/สัปดาห์" },
+      { value: "often", emoji: "🍳", label: "ทำบ่อย", sub: "4–7 วัน/สัปดาห์" },
     ],
   },
   {

@@ -26,7 +26,7 @@ export default function ExploreControls({
   };
 
   const chip = (active: boolean) =>
-    `rounded-full px-3 py-1 text-xs transition active:scale-95 focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none ${
+    `shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-xs transition active:scale-95 focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-none ${
       active
         ? "bg-brand-50 font-semibold text-brand-700"
         : "border border-ink/10 text-ink-soft hover:bg-cream-sunk"
@@ -44,7 +44,7 @@ export default function ExploreControls({
         }}
         className="mt-3 w-full rounded-xl border border-ink/10 bg-cream-card px-3 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:border-brand focus:ring-2 focus:ring-brand/20 focus:outline-none"
       />
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="no-scrollbar -mx-5 mt-3 flex gap-2 overflow-x-auto px-5">
         <button onClick={() => go({ q: query })} className={chip(activeCategory === "")}>
           ทั้งหมด
         </button>

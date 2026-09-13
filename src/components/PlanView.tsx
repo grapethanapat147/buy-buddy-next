@@ -47,7 +47,7 @@ function FilterChip({
   return (
     <button
       onClick={onClick}
-      className={`rounded-full px-3 py-1 text-sm transition ${
+      className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-sm transition ${
         active
           ? "bg-brand-50 font-semibold text-brand-700"
           : "border border-ink/10 text-ink-soft hover:bg-cream-sunk"
@@ -216,8 +216,8 @@ export default function PlanView({
           </AnimatePresence>
 
           {categories.length > 1 && (
-            <div className="sticky top-0 z-20 -mx-5 mb-3 border-b border-ink/5 bg-cream-card/95 px-5 py-2.5 backdrop-blur">
-              <div className="flex flex-wrap gap-2">
+            <div className="sticky top-0 z-20 -mx-5 mb-3 border-b border-ink/5 bg-cream-card/95 py-2.5 backdrop-blur">
+              <div className="no-scrollbar flex gap-2 overflow-x-auto px-5">
                 <FilterChip active={activeFilter === "all"} onClick={() => setFilter("all")}>
                   ทั้งหมด
                 </FilterChip>
@@ -230,7 +230,6 @@ export default function PlanView({
             </div>
           )}
 
-          <p className="mb-2 text-xs text-ink-muted">ปัดซ้ายที่รายการเพื่อเอาออกจากกระเป๋า</p>
           <div className="space-y-2">
             <AnimatePresence initial={false}>
               {shown.map((it) => (

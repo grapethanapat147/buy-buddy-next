@@ -27,6 +27,15 @@ body {
     );
 }
 
+/* Horizontal chip rails scroll without showing a bar on desktop. */
+.no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
 /* Page titles wear the display face; -0.01em keeps Mitr tight and intentional. */
 h1 {
     font-family: var(--font-display);
