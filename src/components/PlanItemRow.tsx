@@ -22,6 +22,7 @@ export default function PlanItemRow({
   lineTotal,
   suggested,
   note,
+  buyOn,
 }: {
   productId: number;
   name: string;
@@ -31,6 +32,8 @@ export default function PlanItemRow({
   lineTotal: number;
   suggested: boolean;
   note: string;
+  /** When this item comes up in the restock calendar, e.g. "วันที่ 15 · อีก 3 วัน". */
+  buyOn?: string;
 }) {
   const [pending, startTransition] = useTransition();
   const x = useMotionValue(0);
@@ -66,7 +69,15 @@ export default function PlanItemRow({
           <IconTile icon={icon} imageUrl={imageUrl} />
           <div className="min-w-0 flex-1">
             <div className="truncate text-sm font-medium text-ink">{name}</div>
-            <div className="mt-0.5 text-xs text-ink-muted">{tierLabel[tier]}</div>
+            <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 text-xs text-ink-muted">
+              <span>{tierLabel[tier]}</span>
+              {buyOn && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span className="font-medium text-brand-700">{buyOn}</span>
+                </>
+              )}
+            </div>
           </div>
           <span className="shrink-0 text-base font-bold tabular-nums text-ink">
             ฿{lineTotal.toLocaleString()}

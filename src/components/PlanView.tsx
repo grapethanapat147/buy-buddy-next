@@ -118,6 +118,42 @@ export default function PlanView({
   const shown = activeFilter === "all" ? items : items.filter((i) => i.category === activeFilter);
   const over = overBudgetBy > 0;
 
+  // Mirror the calendar: things you buy on move-in day first, then the recurring
+  // ones in the order their day comes up, each labelled with that day.
+  const daysInMonth = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0,
+  ).getDate();
+  const today = new Date().getDate();
+  const scheduleById = new Map(restockItems.map((r) => [r.id, Math.min(daysInMonth, r.day)]));
+  /** Days until the cycle comes round again — a day already past belongs to next month. */
+  const daysUntil = (day: number) => (day >= today ? day - today : day - today + daysInMonth);
+
+  const buyNow = shown.filter((i) => !scheduleById.has(i.productId));
+  const onSchedule = shown
+    .filter((i) => scheduleById.has(i.productId))
+    .sort(
+      (a, b) =>
+        daysUntil(scheduleById.get(a.productId)!) - daysUntil(scheduleById.get(b.productId)!),
+    );
+  const showGroupHeadings = buyNow.length > 0 && onSchedule.length > 0;
+
+  const buyOnLabel = (productId: number) => {
+    const day = scheduleById.get(productId);
+    if (day === undefined) {
+      return undefined;
+    }
+    const inDays = daysUntil(day);
+    if (inDays === 0) {
+      return "ซื้อวันนี้";
+    }
+    if (day < today) {
+      return `รอบหน้า · วันที่ ${day}`;
+    }
+    return inDays <= 7 ? `วันที่ ${day} · อีก ${inDays} วัน` : `วันที่ ${day}`;
+  };
+
   const prevOver = useRef(overBudgetBy);
   useEffect(() => {
     if (prevOver.current > 0 && overBudgetBy === 0) {
@@ -230,31 +266,48 @@ export default function PlanView({
             </div>
           )}
 
-          <div className="space-y-2">
-            <AnimatePresence initial={false}>
-              {shown.map((it) => (
-                <motion.div
-                  key={it.productId}
-                  layout
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: -60, transition: { duration: 0.2 } }}
-                  transition={{ duration: 0.22, ease: EASE }}
-                >
-                  <PlanItemRow
-                    productId={it.productId}
-                    name={it.name}
-                    icon={it.icon}
-                    imageUrl={it.imageUrl}
-                    tier={it.tier}
-                    lineTotal={it.lineTotal}
-                    suggested={it.suggested}
-                    note={it.note}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+          {/* Ordered the way the calendar is: buy-now first, then by scheduled day. */}
+          {[
+            { key: "now", heading: "ซื้อตอนย้ายเข้า", note: "ของที่ต้องมีก่อนเข้าอยู่", rows: buyNow },
+            { key: "cycle", heading: "ของใช้ซ้ำ — ตามรอบ", note: "เรียงตามวันที่ถึงรอบซื้อ", rows: onSchedule },
+          ]
+            .filter((group) => group.rows.length > 0)
+            .map((group) => (
+              <section key={group.key} className="mb-5">
+                {showGroupHeadings && (
+                  <div className="mb-2">
+                    <h2 className="text-sm font-bold text-ink">{group.heading}</h2>
+                    <p className="text-xs text-ink-muted">{group.note}</p>
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <AnimatePresence initial={false}>
+                    {group.rows.map((it) => (
+                      <motion.div
+                        key={it.productId}
+                        layout
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, x: -60, transition: { duration: 0.2 } }}
+                        transition={{ duration: 0.22, ease: EASE }}
+                      >
+                        <PlanItemRow
+                          productId={it.productId}
+                          name={it.name}
+                          icon={it.icon}
+                          imageUrl={it.imageUrl}
+                          tier={it.tier}
+                          lineTotal={it.lineTotal}
+                          suggested={it.suggested}
+                          note={it.note}
+                          buyOn={buyOnLabel(it.productId)}
+                        />
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </section>
+            ))}
 
           {items.length === 0 && (
             <div className="flex flex-col items-center gap-3 py-10 text-center">

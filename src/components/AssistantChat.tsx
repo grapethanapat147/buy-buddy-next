@@ -3,7 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import Mascot from "./Mascot";
-import { consultSpec } from "@/app/plan-actions";
+import { answerFollowUp, consultSpec, type FollowUp } from "@/app/plan-actions";
 
 type Message =
   | { role: "assistant"; text: string; points?: string[]; cta?: boolean }
@@ -15,16 +15,45 @@ const STARTERS = [
   "งบ 12000 ทำอาหารบ่อย ทำงานที่ห้อง",
 ];
 
-export default function AssistantChat() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      text: "สวัสดี เล่าเรื่องห้องของคุณมาได้เลย — งบเท่าไหร่ อยู่กี่คน ทำอาหารไหม เดี๋ยวจัดของให้",
-    },
-  ]);
+export default function AssistantChat({ seedQuery = "" }: { seedQuery?: string }) {
+  const [messages, setMessages] = useState<Message[]>(
+    seedQuery
+      ? [
+          {
+            role: "assistant",
+            text: `หา “${seedQuery}” ไม่เจอในคลังใช่ไหม — เล่าให้ฟังหน่อยว่าจะเอาไปใช้ทำอะไร และงบประมาณเท่าไหร่ เดี๋ยวหาของที่ใกล้เคียงให้`,
+          },
+        ]
+      : [
+          {
+            role: "assistant",
+            text: "สวัสดี เล่าเรื่องห้องของคุณมาได้เลย — งบเท่าไหร่ อยู่กี่คน ทำอาหารไหม เดี๋ยวจัดของให้",
+          },
+        ],
+  );
   const [input, setInput] = useState("");
   const [pending, startTransition] = useTransition();
+  /** Gaps the description left open, asked back one at a time. */
+  const [queue, setQueue] = useState<FollowUp[]>([]);
   const endRef = useRef<HTMLDivElement>(null);
+
+  const toEnd = () =>
+    requestAnimationFrame(() => endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }));
+
+  /** Ask the next open question, or wrap up with the summary + CTA when none are left. */
+  const askNext = (remaining: FollowUp[], points: string[]) => {
+    if (remaining.length === 0) {
+      setQueue([]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", text: "ครบแล้ว! สรุปที่เข้าใจ—", points, cta: true },
+      ]);
+    } else {
+      setQueue(remaining);
+      setMessages((prev) => [...prev, { role: "assistant", text: remaining[0].question }]);
+    }
+    toEnd();
+  };
 
   const send = (text: string) => {
     const trimmed = text.trim();
@@ -37,11 +66,40 @@ export default function AssistantChat() {
       const res = await consultSpec(trimmed);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", text: "จัดให้แล้ว! เข้าใจว่า—", points: res.points, cta: true },
+        {
+          role: "assistant",
+          text:
+            res.followUps.length > 0
+              ? "เข้าใจแล้ว— ขอถามเพิ่มอีกนิดให้แม่นขึ้นนะ"
+              : "จัดให้แล้ว! เข้าใจว่า—",
+          points: res.points,
+          cta: res.followUps.length === 0,
+        },
       ]);
-      requestAnimationFrame(() =>
-        endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }),
-      );
+      askNext(res.followUps, res.points);
+    });
+  };
+
+  const answer = (choice: { value: string; label: string }) => {
+    if (pending || queue.length === 0) {
+      return;
+    }
+    const current = queue[0];
+    setMessages((prev) => [...prev, { role: "user", text: choice.label }]);
+    startTransition(async () => {
+      const res = await answerFollowUp(current.field, choice.value);
+      askNext(queue.slice(1), res.points);
+    });
+  };
+
+  const skipRest = () => {
+    if (pending || queue.length === 0) {
+      return;
+    }
+    setMessages((prev) => [...prev, { role: "user", text: "ข้ามไปดูผลเลย" }]);
+    startTransition(async () => {
+      const res = await answerFollowUp(queue[0].field, "");
+      askNext([], res.points);
     });
   };
 
@@ -111,6 +169,30 @@ export default function AssistantChat() {
               {s}
             </button>
           ))}
+        </div>
+      )}
+
+      {queue.length > 0 && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {queue[0].choices.map((c) => (
+            <button
+              key={c.value}
+              type="button"
+              disabled={pending}
+              onClick={() => answer(c)}
+              className="rounded-full border border-brand/40 bg-brand-50 px-3.5 py-2 text-sm font-medium text-brand-700 transition hover:bg-brand-100 active:scale-95 disabled:opacity-50"
+            >
+              {c.label}
+            </button>
+          ))}
+          <button
+            type="button"
+            disabled={pending}
+            onClick={skipRest}
+            className="rounded-full px-3 py-2 text-sm text-ink-muted underline-offset-4 transition hover:underline disabled:opacity-50"
+          >
+            ข้ามไปดูผลเลย
+          </button>
         </div>
       )}
 

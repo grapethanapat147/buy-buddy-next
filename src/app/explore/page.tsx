@@ -84,8 +84,14 @@ export default async function ExplorePage({
             </div>
             <div className="flex flex-wrap items-center justify-center gap-2">
               <Link
+                href={`/assistant${query ? `?q=${encodeURIComponent(q)}` : ""}`}
+                className="rounded-full bg-brand-grad px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:brightness-105 active:scale-95"
+              >
+                ปรึกษา BuyBuddy
+              </Link>
+              <Link
                 href="/explore"
-                className="rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-500 active:scale-95"
+                className="rounded-full border border-ink/15 px-4 py-2 text-sm text-ink-soft transition hover:bg-cream-card active:scale-95"
               >
                 ดูของทั้งหมด
               </Link>
