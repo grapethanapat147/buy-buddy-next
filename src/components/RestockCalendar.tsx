@@ -77,7 +77,7 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
         <p className="text-sm text-ink-muted">
           ยังไม่มีของที่ต้องซื้อซ้ำในกระเป๋า
           <br />
-          เก็บพวกของกินของใช้เข้ามา แล้วมาวางแผนวันซื้อกันน้า 🛒
+          เก็บพวกของกินของใช้เข้ามา แล้วมาวางแผนวันซื้อกันน้า
         </p>
       </div>
     );
@@ -91,7 +91,7 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
         <Mascot mood={selectedId !== null ? "search" : "holding"} size={40} />
         <p className="text-xs text-ink-soft">
           {selectedId !== null ? (
-            <>แตะวันในปฏิทินเลย เดี๋ยวจัดให้ 📅</>
+            <>แตะวันในปฏิทินเลย เดี๋ยวจัดให้</>
           ) : (
             <>แตะของด้านล่างเลือกก่อน แล้วแตะวันในปฏิทินเพื่อย้ายวันซื้อ · แตะ ✓ เมื่อซื้อแล้ว</>
           )}
@@ -140,15 +140,28 @@ export default function RestockCalendar({ items }: { items: RestockItem[] }) {
                 {day}
               </span>
               <span className="flex flex-wrap justify-center gap-0.5 leading-none">
-                {dayItems.slice(0, 2).map((it) => (
-                  <span
-                    key={it.id}
-                    className={`text-sm ${it.done ? "opacity-30 grayscale" : ""}`}
-                    aria-hidden="true"
-                  >
-                    {it.icon}
-                  </span>
-                ))}
+                {dayItems.slice(0, 2).map((it) =>
+                  it.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={it.id}
+                      src={it.imageUrl}
+                      alt=""
+                      aria-hidden="true"
+                      className={`h-4 w-4 rounded-[3px] object-cover ${
+                        it.done ? "opacity-30 grayscale" : ""
+                      }`}
+                    />
+                  ) : (
+                    <span
+                      key={it.id}
+                      aria-hidden="true"
+                      className={`h-2 w-2 self-center rounded-full bg-brand ${
+                        it.done ? "opacity-30" : ""
+                      }`}
+                    />
+                  ),
+                )}
                 {dayItems.length > 2 && (
                   <span className="rounded-full bg-ink/10 px-1 text-[9px] font-semibold leading-tight text-ink-soft">
                     +{dayItems.length - 2}

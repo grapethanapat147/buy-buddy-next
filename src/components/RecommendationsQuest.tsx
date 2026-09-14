@@ -58,16 +58,19 @@ export type OwnedItem = {
 };
 
 function FilterChip({
+  name,
   active,
   onClick,
   children,
 }: {
+  name: string;
   active: boolean;
   onClick: () => void;
   children: React.ReactNode;
 }) {
   return (
     <button
+      data-chip={name}
       onClick={onClick}
       className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-sm transition ${
         active
@@ -96,19 +99,63 @@ export default function RecommendationsQuest({
   readinessPercent: number;
 }) {
   const [toast, setToast] = useState<string | null>(null);
-  const [filter, setFilter] = useState<string>("all");
-  const shownCategories =
-    filter === "all" ? categories : categories.filter((c) => c.name === filter);
-  const shownOthers =
-    filter === "all" ? otherCategories : otherCategories.filter((c) => c.name === filter);
 
-  // Chips span both sections so a tap filters the whole page, recommended + rest.
+  // Chips are category navigation, not a filter: tapping jumps to the section and
+  // scrolling moves the highlight along with you, so the whole list stays in reach.
   const chipNames: string[] = [];
   for (const c of [...categories, ...otherCategories]) {
     if (!chipNames.includes(c.name)) {
       chipNames.push(c.name);
     }
   }
+  const [activeCat, setActiveCat] = useState<string>(chipNames[0] ?? "");
+  const railRef = useRef<HTMLDivElement>(null);
+  /** Stable dep: the props are fresh arrays each render, which would thrash the observer. */
+  const catKey = chipNames.join("|");
+
+  const jumpTo = (name: string) => {
+    setActiveCat(name);
+    document
+      .querySelector(`[data-cat="${CSS.escape(name)}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  /** Highlight the category whose section is nearest the top of the viewport. */
+  useEffect(() => {
+    const sections = [...document.querySelectorAll<HTMLElement>("[data-cat]")];
+    if (sections.length === 0) {
+      return;
+    }
+    // The observer only reports sections whose state CHANGED, so keep a running
+    // map of everything and re-pick the topmost visible one on every callback.
+    const visible = new Map<Element, boolean>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => visible.set(e.target, e.isIntersecting));
+        const inView = sections.filter((s) => visible.get(s));
+        if (inView.length === 0) {
+          return;
+        }
+        // `inView` keeps document order; the LAST one is the section you have just
+        // scrolled into — the one above it is only still showing its tail.
+        const name = inView[inView.length - 1].getAttribute("data-cat");
+        if (name) {
+          setActiveCat(name);
+        }
+      },
+      { rootMargin: "-72px 0px -70% 0px", threshold: 0 },
+    );
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, [catKey]);
+
+  /** Keep the highlighted chip inside the visible part of the rail. */
+  useEffect(() => {
+    railRef.current
+      ?.querySelector<HTMLElement>(`[data-chip="${CSS.escape(activeCat)}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [activeCat]);
+
   const prev = useRef<{ done: Record<string, boolean>; percent: number } | null>(null);
 
   useEffect(() => {
@@ -173,9 +220,8 @@ export default function RecommendationsQuest({
             {ownedItems.map((it) => (
               <span
                 key={it.productId}
-                className="flex items-center gap-1 rounded-full bg-cream-card px-2.5 py-1 text-xs text-ink-soft"
+                className="rounded-full bg-cream-card px-2.5 py-1 text-xs text-ink-soft"
               >
-                <span aria-hidden="true">{it.icon}</span>
                 {it.name}
               </span>
             ))}
@@ -185,12 +231,14 @@ export default function RecommendationsQuest({
 
       {chipNames.length > 1 && (
         <div className="sticky top-0 z-20 -mx-5 mt-4 border-b border-ink/5 bg-cream-card/95 py-2.5 backdrop-blur">
-          <div className="no-scrollbar flex gap-2 overflow-x-auto px-5">
-            <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>
-              ทั้งหมด
-            </FilterChip>
+          <div ref={railRef} className="no-scrollbar flex gap-2 overflow-x-auto px-5">
             {chipNames.map((name) => (
-              <FilterChip key={name} active={filter === name} onClick={() => setFilter(name)}>
+              <FilterChip
+                key={name}
+                name={name}
+                active={activeCat === name}
+                onClick={() => jumpTo(name)}
+              >
                 {name}
               </FilterChip>
             ))}
@@ -199,17 +247,17 @@ export default function RecommendationsQuest({
       )}
 
       {/* Recommended for you — the curated quest, always shown first. */}
-      {shownCategories.length > 0 && (
+      {categories.length > 0 && (
         <div className="mt-4">
           <h2 className="flex items-center gap-2 text-sm font-bold text-brand-700">
             <span className="h-4 w-1 rounded-full bg-brand" aria-hidden="true" />
             ของแนะนำสำหรับคุณ
           </h2>
           <div className="mt-3 space-y-5">
-            {shownCategories.map((cat) => {
+            {categories.map((cat) => {
               const done = cat.collected === cat.total && cat.total > 0;
               return (
-                <section key={cat.name}>
+                <section key={cat.name} data-cat={cat.name} className="scroll-mt-24">
                   <div className="mb-2 flex items-center justify-between">
                     <h3 className="text-base font-semibold text-ink">{cat.name}</h3>
                     {done ? (
@@ -257,7 +305,7 @@ export default function RecommendationsQuest({
       )}
 
       {/* Everything else — browse the full catalog without leaving the page. */}
-      {shownOthers.length > 0 && (
+      {otherCategories.length > 0 && (
         <div className="mt-8">
           <h2 className="flex items-center gap-2 text-sm font-bold text-ink">
             <span className="h-4 w-1 rounded-full bg-ink/25" aria-hidden="true" />
@@ -265,8 +313,8 @@ export default function RecommendationsQuest({
           </h2>
           <p className="mt-0.5 text-xs text-ink-soft">อยากได้อย่างอื่นเพิ่ม เลือกได้เลย</p>
           <div className="mt-3 space-y-5">
-            {shownOthers.map((cat) => (
-              <section key={cat.name}>
+            {otherCategories.map((cat) => (
+              <section key={cat.name} data-cat={cat.name} className="scroll-mt-24">
                 <h3 className="mb-2 text-base font-semibold text-ink">{cat.name}</h3>
                 <div className="space-y-2">
                   {cat.items.map((it) => (

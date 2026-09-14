@@ -44,7 +44,7 @@ export default function PlanItemRow({
         style={{ opacity: hint }}
         className="pointer-events-none absolute inset-0 flex items-center justify-end gap-1.5 rounded-2xl bg-rose-50 pr-5 text-sm font-semibold text-rose-600"
       >
-        <span aria-hidden="true">🗑️</span> เอาออกจากกระเป๋า
+        เอาออกจากกระเป๋า
       </motion.div>
 
       <motion.div

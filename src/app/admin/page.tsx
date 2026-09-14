@@ -56,7 +56,7 @@ export default async function AdminPage({
             </div>
             {hasLink.has(p.id) ? (
               <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
-                🔗 มีลิงก์
+                มีลิงก์
               </span>
             ) : (
               <span className="shrink-0 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-semibold text-amber-700">

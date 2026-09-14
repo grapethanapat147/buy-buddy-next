@@ -10,17 +10,113 @@ import PlanningOverlay from "@/components/PlanningOverlay";
 import { ArrowLeft, arrowBtnClass } from "@/components/FlowTopNav";
 
 /** A catalog item the wizard asks about under "ในห้องมีอะไรอยู่แล้วบ้าง". */
-export type OwnedCandidate = { id: number; icon: string; name: string };
+export type OwnedCandidate = { id: number; name: string };
 
 /** Fixtures the room may already have — unchecked means "ไม่มี" so we recommend one. */
-const fixtures: Array<[string, string, string]> = [
-  ["has_kitchen_counter", "🍳", "เคาน์เตอร์ครัว"],
-  ["has_wardrobe", "🚪", "ตู้เสื้อผ้า"],
-  ["has_dining_table", "🍽️", "โต๊ะกินข้าว"],
-  ["has_aircon", "❄️", "แอร์"],
+const fixtures: Array<[string, string]> = [
+  ["has_kitchen_counter", "เคาน์เตอร์ครัว"],
+  ["has_wardrobe", "ตู้เสื้อผ้า"],
+  ["has_dining_table", "โต๊ะกินข้าว"],
+  ["has_aircon", "แอร์"],
 ];
 
-type ChoiceOption = { value: string; emoji?: string; label: string; sub?: string };
+/** Shared geometry for the answer-card line icons (no emoji anywhere in the UI). */
+const ico = {
+  width: 26,
+  height: 26,
+  viewBox: "0 0 24 24",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: 1.7,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+  "aria-hidden": true,
+};
+
+const Icons = {
+  takeout: (
+    <svg {...ico}>
+      <path d="M5.5 5.5h13v2.6h-13z" />
+      <path d="M7 8.1h10l-1 12.4H8z" />
+      <path d="M12 11v6" />
+    </svg>
+  ),
+  bowl: (
+    <svg {...ico}>
+      <path d="M3.5 11.5h17a8.5 8.5 0 0 1-17 0Z" />
+      <path d="M9 7.5c0-1 1-1.4 1-2.4M12.5 7c0-1.2 1-1.6 1-2.8M16 7.5c0-1 .8-1.4.8-2.4" />
+    </svg>
+  ),
+  pan: (
+    <svg {...ico}>
+      <ellipse cx="9.8" cy="13.5" rx="6.6" ry="5.2" />
+      <path d="M16.2 12.2 22 9.4" />
+      <circle cx="9.8" cy="13.5" r="1.9" />
+    </svg>
+  ),
+  washer: (
+    <svg {...ico}>
+      <rect x="4" y="3" width="16" height="18" rx="2.2" />
+      <circle cx="12" cy="14" r="4.2" />
+      <circle cx="7.6" cy="6.6" r=".9" />
+    </svg>
+  ),
+  bubbles: (
+    <svg {...ico}>
+      <circle cx="9" cy="10.5" r="4" />
+      <circle cx="16" cy="7.8" r="2.2" />
+      <circle cx="15.6" cy="15" r="3" />
+    </svg>
+  ),
+  shop: (
+    <svg {...ico}>
+      <path d="M3 9.5h18" />
+      <path d="M4.6 9.5V20a1 1 0 0 0 1 1h12.8a1 1 0 0 0 1-1V9.5" />
+      <path d="m3 9.5 2-5.5h14l2 5.5" />
+    </svg>
+  ),
+  building: (
+    <svg {...ico}>
+      <rect x="5" y="3" width="14" height="18" rx="1.6" />
+      <path d="M9 7.5h2M13 7.5h2M9 11.5h2M13 11.5h2M10.5 21v-4h3v4" />
+    </svg>
+  ),
+  house: (
+    <svg {...ico}>
+      <path d="M3.7 10.8 12 4l8.3 6.8" />
+      <path d="M6.2 10.2V20h11.6v-9.8" />
+      <path d="M10.2 20v-5h3.6v5" />
+    </svg>
+  ),
+  swap: (
+    <svg {...ico}>
+      <path d="M4 8.5h13m-3.2-3.4L17.4 8.5l-3.6 3.4" />
+      <path d="M20 15.5H7m3.2-3.4L6.6 15.5l3.6 3.4" />
+    </svg>
+  ),
+  target: (
+    <svg {...ico}>
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="3.4" />
+      <circle cx="12" cy="12" r=".7" fill="currentColor" stroke="none" />
+    </svg>
+  ),
+  scales: (
+    <svg {...ico}>
+      <path d="M12 4.4v15.2M6.8 19.6h10.4M4 8.6h16" />
+      <path d="M4 8.6 1.9 13.2h4.2Z" />
+      <path d="M20 8.6l-2.1 4.6h4.2Z" />
+    </svg>
+  ),
+  sparkle: (
+    <svg {...ico}>
+      <path d="M11 3.6 12.7 8.3 17.4 10 12.7 11.7 11 16.4 9.3 11.7 4.6 10 9.3 8.3Z" />
+      <path d="M17.6 15.2 18.4 17.4 20.6 18.2 18.4 19 17.6 21.2 16.8 19 14.6 18.2 16.8 17.4Z" />
+    </svg>
+  ),
+};
+
+type ChoiceOption = { value: string; icon?: React.ReactNode; label: string; sub?: string };
 
 type Step =
   | { kind: "budget"; key: "budget"; label: string; hint?: string; presets: number[] }
@@ -50,43 +146,44 @@ const STEPS: Step[] = [
   {
     kind: "choice", key: "cooking", label: "ทำอาหารเองบ่อยแค่ไหน",
     options: [
-      { value: "never", emoji: "🥡", label: "ไม่ทำเลย", sub: "0 วัน/สัปดาห์" },
-      { value: "sometimes", emoji: "🍜", label: "ทำบ้าง", sub: "1–3 วัน/สัปดาห์" },
-      { value: "often", emoji: "🍳", label: "ทำบ่อย", sub: "4–7 วัน/สัปดาห์" },
+      { value: "never", icon: Icons.takeout, label: "ไม่ทำเลย", sub: "0 วัน/สัปดาห์" },
+      { value: "sometimes", icon: Icons.bowl, label: "ทำบ้าง", sub: "1–3 วัน/สัปดาห์" },
+      { value: "often", icon: Icons.pan, label: "ทำบ่อย", sub: "4–7 วัน/สัปดาห์" },
     ],
   },
   {
     kind: "choice", key: "laundry", label: "ซักผ้ายังไง",
     options: [
-      { value: "own_machine", emoji: "🧺", label: "มีเครื่องซัก" },
-      { value: "hand", emoji: "🫧", label: "ซักมือ" },
-      { value: "service", emoji: "🏪", label: "ส่งร้าน" },
+      { value: "own_machine", icon: Icons.washer, label: "มีเครื่องซัก" },
+      { value: "hand", icon: Icons.bubbles, label: "ซักมือ" },
+      { value: "service", icon: Icons.shop, label: "ส่งร้าน" },
     ],
   },
   {
     kind: "choice", key: "work_style", label: "ทำงานที่ไหนเป็นหลัก",
     options: [
-      { value: "office", emoji: "🏢", label: "ออฟฟิศ" },
-      { value: "home", emoji: "🏠", label: "ที่ห้อง" },
-      { value: "hybrid", emoji: "🔀", label: "ผสม" },
+      { value: "office", icon: Icons.building, label: "ออฟฟิศ" },
+      { value: "home", icon: Icons.house, label: "ที่ห้อง" },
+      { value: "hybrid", icon: Icons.swap, label: "ผสม" },
     ],
   },
   {
     kind: "choice", key: "spending_style", label: "สไตล์การซื้อของ",
     options: [
-      { value: "essentials", emoji: "🎯", label: "เอาที่จำเป็น" },
-      { value: "balanced", emoji: "⚖️", label: "พอดี ๆ" },
-      { value: "comfort", emoji: "✨", label: "อยากได้ครบ" },
+      { value: "essentials", icon: Icons.target, label: "เอาที่จำเป็น" },
+      { value: "balanced", icon: Icons.scales, label: "พอดี ๆ" },
+      { value: "comfort", icon: Icons.sparkle, label: "อยากได้ครบ" },
     ],
   },
   { kind: "have", key: "have", label: "ในห้องมีอะไรอยู่แล้วบ้าง", hint: "ห้องมีเฟอร์มาให้ หรือมีของเดิมอยู่แล้ว เลือกไว้เลย — เราจะแนะนำเฉพาะของที่ยังขาด" },
 ];
 
-const toggleClass = (active: boolean) =>
-  `flex items-center gap-2 whitespace-pre-line rounded-2xl border p-4 text-left text-base leading-snug transition active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+/** Compact toggle for "what the room already has" — a chip reads faster than a card. */
+const pillClass = (active: boolean) =>
+  `rounded-full border px-3.5 py-2 text-sm transition active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
     active
-      ? "border-2 border-brand bg-brand-50 font-semibold text-brand-700"
-      : "border-ink/10 text-ink-soft hover:bg-cream-sunk"
+      ? "border-brand bg-brand-50 font-semibold text-brand-700"
+      : "border-ink/12 text-ink-soft hover:bg-cream-sunk"
   }`;
 
 function SubmitButton() {
@@ -289,13 +386,11 @@ export default function WizardForm({
                       : "border-ink/10 hover:bg-cream-sunk"
                   }`}
                 >
-                  {opt.emoji && (
-                    <span className="text-3xl leading-none" aria-hidden="true">
-                      {opt.emoji}
-                    </span>
+                  {opt.icon && (
+                    <span className={active ? "text-brand" : "text-ink-soft"}>{opt.icon}</span>
                   )}
                   <span
-                    className={`font-semibold leading-tight ${opt.emoji ? "text-sm" : "text-lg"} ${
+                    className={`font-semibold leading-tight ${opt.icon ? "text-sm" : "text-lg"} ${
                       active ? "text-brand-700" : "text-ink"
                     }`}
                   >
@@ -311,20 +406,16 @@ export default function WizardForm({
         )}
 
         {cur.kind === "have" && (
-          <div className="mt-5 grid grid-cols-2 gap-2">
-            {fixtures.map(([key, emoji, label]) => (
+          <div className="mt-5 flex flex-wrap gap-2">
+            {fixtures.map(([key, label]) => (
               <button
                 key={key}
                 type="button"
                 aria-pressed={Boolean(has[key])}
                 onClick={() => setHas((h) => ({ ...h, [key]: !h[key] }))}
-                className={toggleClass(Boolean(has[key]))}
+                className={pillClass(Boolean(has[key]))}
               >
-                <span aria-hidden="true">{emoji}</span>
-                <span className="flex-1">{label}</span>
-                <span aria-hidden="true" className={has[key] ? "text-brand" : "text-ink-muted/40"}>
-                  {has[key] ? "✓" : "＋"}
-                </span>
+                {label}
               </button>
             ))}
             {ownedCandidates.map((c) => (
@@ -333,13 +424,9 @@ export default function WizardForm({
                 type="button"
                 aria-pressed={Boolean(owned[c.id])}
                 onClick={() => setOwned((o) => ({ ...o, [c.id]: !o[c.id] }))}
-                className={toggleClass(Boolean(owned[c.id]))}
+                className={pillClass(Boolean(owned[c.id]))}
               >
-                <span aria-hidden="true">{c.icon}</span>
-                <span className="flex-1">{c.name}</span>
-                <span aria-hidden="true" className={owned[c.id] ? "text-brand" : "text-ink-muted/40"}>
-                  {owned[c.id] ? "✓" : "＋"}
-                </span>
+                {c.name}
               </button>
             ))}
           </div>

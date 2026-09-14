@@ -23,7 +23,7 @@ export default function RegisterForm() {
         <LineLoginButton label="สมัคร / เข้าสู่ระบบด้วย LINE" />
       </div>
       <p className="mt-2 text-center text-xs text-ink-muted">
-        🔒 ใช้แค่เก็บแผนของคุณ — ไม่มีการเก็บเงินหรือส่งต่อข้อมูลให้ใคร
+        ใช้แค่เก็บแผนของคุณ — ไม่มีการเก็บเงินหรือส่งต่อข้อมูลให้ใคร
       </p>
 
       <div className="my-5 flex items-center gap-3 text-xs text-ink-muted">

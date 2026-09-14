@@ -32,7 +32,7 @@ export default async function WizardPage() {
 
   const ownedCandidates: OwnedCandidate[] = OWNED_CANDIDATE_SLUGS.flatMap((slug) => {
     const p = bySlug.get(slug);
-    return p ? [{ id: p.id, icon: p.icon, name: p.name }] : [];
+    return p ? [{ id: p.id, name: p.name }] : [];
   });
 
   return (

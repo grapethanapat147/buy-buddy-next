@@ -262,7 +262,7 @@ export default function PlanView({
               <p className="text-sm text-ink-muted">
                 กระเป๋ายังว่างอยู่เลย~
                 <br />
-                ไปเลือกของที่ถูกใจมาใส่กันเถอะ 🛍️
+                ไปเลือกของที่ถูกใจมาใส่กันเถอะ
               </p>
             </div>
           )}

@@ -24,8 +24,8 @@ export default async function AppLayout({
 
   if (minimal) {
     return (
-      <div className="mx-auto max-w-xl px-4 pb-10 pt-5">
-        <header className="mb-4 flex items-center gap-3">
+      <div className="mx-auto max-w-xl pb-10 pt-5 sm:px-4">
+        <header className="mb-4 flex items-center gap-3 px-5 sm:px-0">
           <Link
             href="/"
             aria-label="ย้อนกลับ"
@@ -41,14 +41,14 @@ export default async function AppLayout({
             <span className="font-display tracking-tight">BuyBuddy</span>
           </Link>
         </header>
-        <main className="rounded-2xl bg-cream-card p-5 shadow-soft">{children}</main>
+        <main className="bg-cream-card p-5 sm:rounded-2xl sm:shadow-soft">{children}</main>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-xl px-4 pb-10 pt-5">
-      <header className="mb-4 flex items-center justify-between">
+    <div className="mx-auto max-w-xl pb-10 pt-5 sm:px-4">
+      <header className="mb-4 flex items-center justify-between px-5 sm:px-0">
         <Link href="/" className="flex items-center gap-1.5 text-xl font-bold text-brand">
           <Mascot mood="happy" size={26} />
           <span className="font-display tracking-tight">BuyBuddy</span>
@@ -98,7 +98,7 @@ export default async function AppLayout({
           {user && <SignOutButton />}
         </nav>
       </header>
-      <main className="rounded-2xl bg-cream-card p-5 shadow-soft">{children}</main>
+      <main className="bg-cream-card p-5 sm:rounded-2xl sm:shadow-soft">{children}</main>
     </div>
   );
 }
